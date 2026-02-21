@@ -30,3 +30,6 @@ npm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 .vercel
+
+# Claude Code (로컬 전용, Git 미추적)
+.claude/
