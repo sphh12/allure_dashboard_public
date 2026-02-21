@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Run {
+  id              String     @id @default(cuid())
+  timestamp       String     @unique
+  status          String
+  platform        String?
+  deviceName      String?
+  platformVersion String?
+  app             String?
+  gitBranch       String?
+  gitCommit       String?
+  gitMessage      String?
+  total           Int        @default(0)
+  passed          Int        @default(0)
+  failed          Int        @default(0)
+  broken          Int        @default(0)
+  skipped         Int        @default(0)
+  durationMs      Int        @default(0)
+  durationText    String?
+  buildName       String?
+  suites          Json?
+  behaviors       Json?
+  packages        Json?
+  environment     Json?
+  artifacts       Artifact[]
+  createdAt       DateTime   @default(now())
+
+  @@index([platform])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Artifact {
+  id          String   @id @default(cuid())
+  runId       String
+  run         Run      @relation(fields: [runId], references: [id], onDelete: Cascade)
+  type        String
+  name        String
+  url         String   @default("")
+  contentType String?
+  sizeBytes   Int?
+  createdAt   DateTime @default(now())
+
+  @@index([runId])
+}

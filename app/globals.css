@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap");
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #0a0a0f;
+  --bg2: #070709;
+  --panel: rgba(18, 18, 24, 0.75);
+  --panel-solid: #121218;
+  --panel-hover: rgba(24, 24, 32, 0.85);
+  --text: #e4e4ec;
+  --white: #ffffff;
+  --muted: #8a8a9a;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-light: rgba(255, 255, 255, 0.12);
+  --passed: #22c55e;
+  --passed-dim: rgba(34, 197, 94, 0.10);
+  --failed: #ef4444;
+  --failed-dim: rgba(239, 68, 68, 0.10);
+  --broken: #f59e0b;
+  --broken-dim: rgba(245, 158, 11, 0.10);
+  --skipped: #6b7280;
+  --skipped-dim: rgba(107, 114, 128, 0.10);
+  --accent: #a78bfa;
+  --accent-dim: rgba(167, 139, 250, 0.10);
+}
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(167, 139, 250, 0.04), transparent),
+    radial-gradient(ellipse 50% 40% at 90% 100%, rgba(34, 197, 94, 0.03), transparent);
+  color: var(--text);
+  min-height: 100vh;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* 글래스모피즘 패널 */
+.glass {
+  background: var(--panel);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+/* 흰색 강조 패널 */
+.glass-bright {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 테이블 행 호버 */
+.run-row {
+  transition: all 0.15s ease;
+}
+.run-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.run-row:hover td:first-child {
+  box-shadow: inset 3px 0 0 var(--white);
+}
+
+/* 스크롤바 커스텀 */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 인풋 포커스 */
+input:focus,
+select:focus {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+/* 셀렉트 옵션 */
+select option {
+  background-color: #121218;
+  color: var(--text);
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in {
+  animation: fadeIn 0.4s ease-out;
+}
