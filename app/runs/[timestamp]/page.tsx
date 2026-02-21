@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import StatusBadge from "@/components/StatusBadge";
+import ArtifactViewer from "@/components/ArtifactViewer";
 import { formatTimestamp } from "@/lib/utils";
 
 interface SuiteItem {
@@ -181,22 +182,8 @@ export default async function RunDetailPage({
       {run.artifacts.length > 0 && (
         <div className="glass rounded-2xl p-5">
           <SectionTitle>Artifacts</SectionTitle>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
-            {run.artifacts.map((a) => (
-              <div
-                key={a.id}
-                className="flex items-center gap-3 rounded-lg p-3"
-                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)" }}
-              >
-                <span
-                  className="px-2 py-1 rounded text-[10px] font-semibold uppercase text-white"
-                  style={{ background: "rgba(255,255,255,0.08)" }}
-                >
-                  {a.type}
-                </span>
-                <span className="text-sm truncate text-white/70">{a.name}</span>
-              </div>
-            ))}
+          <div className="mt-3">
+            <ArtifactViewer artifacts={run.artifacts} />
           </div>
         </div>
       )}

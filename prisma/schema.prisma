@@ -44,10 +44,12 @@ model Artifact {
   run         Run      @relation(fields: [runId], references: [id], onDelete: Cascade)
   type        String
   name        String
+  source      String   @default("")
   url         String   @default("")
   contentType String?
   sizeBytes   Int?
   createdAt   DateTime @default(now())
 
+  @@unique([runId, source])
   @@index([runId])
 }
