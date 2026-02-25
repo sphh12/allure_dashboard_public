@@ -19,28 +19,8 @@ export const dynamic = "force-dynamic";
 export default async function Home({ searchParams }: Props) {
   const sp = await searchParams;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: any = {};
-
-  if (sp.platform) where.platform = sp.platform;
-  if (sp.status) where.status = sp.status;
-  if (sp.from || sp.to) {
-    where.timestamp = {};
-    if (sp.from) where.timestamp.gte = sp.from;
-    if (sp.to) where.timestamp.lte = sp.to;
-  }
-  if (sp.q) {
-    where.OR = [
-      { timestamp: { contains: sp.q, mode: "insensitive" } },
-      { gitBranch: { contains: sp.q, mode: "insensitive" } },
-      { gitCommit: { contains: sp.q, mode: "insensitive" } },
-      { deviceName: { contains: sp.q, mode: "insensitive" } },
-      { gitMessage: { contains: sp.q, mode: "insensitive" } },
-    ];
-  }
-
-  const runs = await prisma.run.findMany({
-    where,
+  // 전체 runs 조회 (StatsBar용 - 필터 무관)
+  const allRuns = await prisma.run.findMany({
     orderBy: { timestamp: "desc" },
     select: {
       id: true,
@@ -61,7 +41,7 @@ export default async function Home({ searchParams }: Props) {
     },
   });
 
-  const aggregated = runs.reduce(
+  const aggregated = allRuns.reduce(
     (acc, r) => ({
       total: acc.total + r.total,
       passed: acc.passed + r.passed,
@@ -71,6 +51,52 @@ export default async function Home({ searchParams }: Props) {
     }),
     { total: 0, passed: 0, failed: 0, broken: 0, skipped: 0 }
   );
+
+  // 필터링된 runs 조회 (테이블용)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: any = {};
+
+  if (sp.platform) where.platform = sp.platform;
+  if (sp.status) where.status = sp.status;
+  if (sp.from || sp.to) {
+    where.timestamp = {};
+    if (sp.from) where.timestamp.gte = sp.from;
+    if (sp.to) where.timestamp.lte = sp.to;
+  }
+  if (sp.q) {
+    where.OR = [
+      { timestamp: { contains: sp.q, mode: "insensitive" } },
+      { gitBranch: { contains: sp.q, mode: "insensitive" } },
+      { gitCommit: { contains: sp.q, mode: "insensitive" } },
+      { deviceName: { contains: sp.q, mode: "insensitive" } },
+      { gitMessage: { contains: sp.q, mode: "insensitive" } },
+    ];
+  }
+
+  const hasFilter = !!(sp.platform || sp.status || sp.from || sp.to || sp.q);
+  const runs = hasFilter
+    ? await prisma.run.findMany({
+        where,
+        orderBy: { timestamp: "desc" },
+        select: {
+          id: true,
+          timestamp: true,
+          status: true,
+          platform: true,
+          deviceName: true,
+          platformVersion: true,
+          gitBranch: true,
+          gitCommit: true,
+          total: true,
+          passed: true,
+          failed: true,
+          broken: true,
+          skipped: true,
+          durationText: true,
+          createdAt: true,
+        },
+      })
+    : allRuns;
 
   return (
     <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 sm:py-8 animate-in">
