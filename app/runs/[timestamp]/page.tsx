@@ -148,10 +148,10 @@ export default async function RunDetailPage({
           </div>
         )}
 
-        {/* Behaviors */}
+        {/* Actions */}
         {behaviors.length > 0 && (
           <div className="glass rounded-2xl p-5">
-            <SectionTitle>Behaviors</SectionTitle>
+            <SectionTitle>Actions</SectionTitle>
             <SuiteList items={behaviors} />
           </div>
         )}
