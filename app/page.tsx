@@ -41,13 +41,14 @@ export default async function Home({ searchParams }: Props) {
     },
   });
 
+  // Run 단위로 카운트 (status 기준)
   const aggregated = allRuns.reduce(
     (acc, r) => ({
-      total: acc.total + r.total,
-      passed: acc.passed + r.passed,
-      failed: acc.failed + r.failed,
-      broken: acc.broken + r.broken,
-      skipped: acc.skipped + r.skipped,
+      total: acc.total + 1,
+      passed: acc.passed + (r.status === "pass" ? 1 : 0),
+      failed: acc.failed + (r.status === "fail" ? 1 : 0),
+      broken: acc.broken + (r.status === "broken" ? 1 : 0),
+      skipped: acc.skipped + (r.status === "skip" ? 1 : 0),
     }),
     { total: 0, passed: 0, failed: 0, broken: 0, skipped: 0 }
   );
