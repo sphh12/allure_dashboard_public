@@ -27,7 +27,13 @@ export default async function RunDetailPage({
 
   if (!run) notFound();
 
-  const env = (run.environment as unknown as Record<string, string>) ?? {};
+  const env: Record<string, string> = {
+    ...((run.environment as unknown as Record<string, string>) ?? {}),
+    // DB 최상위 필드를 우선 사용 (environment JSON 내 값은 인코딩이 깨질 수 있음)
+    gitMessage: run.gitMessage ?? "",
+    gitBranch: run.gitBranch ?? "",
+    gitCommit: run.gitCommit ?? "",
+  };
   const suites = (run.suites as unknown as SuiteItem[]) ?? [];
   const behaviors = (run.behaviors as unknown as SuiteItem[]) ?? [];
   const passRate = run.total > 0 ? Math.round((run.passed / run.total) * 100) : 0;
