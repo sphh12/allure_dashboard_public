@@ -168,7 +168,7 @@ export default async function RunDetailPage({
         <SectionTitle>Environment</SectionTitle>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
           {[...priorityEnv.filter((k) => env[k]), ...otherEnv.filter((k) => env[k])].map((key) => {
-            const tooltipKeys = ["gitMessage", "OS", "app", "appiumServer"];
+            const tooltipKeys = ["gitMessage", "os", "app", "appiumServer"];
             const showTooltip = tooltipKeys.includes(key);
             const displayValue = key === "app" ? String(env[key]).split(/[/\\]/).pop() || env[key] : String(env[key]);
             // camelCase → CAMEL_CASE 변환 (예: deviceName → DEVICE_NAME)
