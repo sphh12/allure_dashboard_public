@@ -94,7 +94,9 @@ export default async function Home({ searchParams }: Props) {
 
       {/* 통계 */}
       <div className="glass rounded-2xl p-6 mb-6">
-        <StatsBar stats={aggregated} />
+        <Suspense>
+          <StatsBar stats={aggregated} />
+        </Suspense>
       </div>
 
       {/* 필터 */}
