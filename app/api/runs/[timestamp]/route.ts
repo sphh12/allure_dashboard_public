@@ -19,6 +19,38 @@ export async function GET(
   return NextResponse.json(run);
 }
 
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ timestamp: string }> }
+) {
+  const { timestamp } = await params;
+  const body = await req.json();
+
+  const run = await prisma.run.findUnique({
+    where: { timestamp },
+    select: { id: true },
+  });
+
+  if (!run) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  // 허용된 필드만 업데이트
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data: any = {};
+  const allowed = ["gitMessage", "gitBranch", "gitCommit", "deviceName", "platform", "platformVersion"];
+  for (const key of allowed) {
+    if (key in body) data[key] = body[key];
+  }
+
+  const updated = await prisma.run.update({
+    where: { id: run.id },
+    data,
+  });
+
+  return NextResponse.json(updated);
+}
+
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ timestamp: string }> }
