@@ -177,7 +177,7 @@ export default async function RunDetailPage({
                 {key}
               </div>
               <div className="text-xs font-mono truncate text-white/80" title={String(env[key])}>
-                {String(env[key])}
+                {key === "app" ? String(env[key]).split(/[/\\]/).pop() || env[key] : String(env[key])}
               </div>
             </div>
           ))}
