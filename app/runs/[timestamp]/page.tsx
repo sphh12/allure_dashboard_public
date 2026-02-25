@@ -167,20 +167,30 @@ export default async function RunDetailPage({
       <div className="glass rounded-2xl p-5 mb-6">
         <SectionTitle>Environment</SectionTitle>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
-          {[...priorityEnv.filter((k) => env[k]), ...otherEnv.filter((k) => env[k])].map((key) => (
-            <div
-              key={key}
-              className="rounded-lg p-3"
-              style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)" }}
-            >
-              <div className="text-[10px] font-medium uppercase tracking-wider mb-1 text-white/30">
-                {key}
+          {[...priorityEnv.filter((k) => env[k]), ...otherEnv.filter((k) => env[k])].map((key) => {
+            const tooltipKeys = ["gitMessage", "OS", "app", "appiumServer"];
+            const showTooltip = tooltipKeys.includes(key);
+            const displayValue = key === "app" ? String(env[key]).split(/[/\\]/).pop() || env[key] : String(env[key]);
+            // camelCase → CAMEL_CASE 변환 (예: deviceName → DEVICE_NAME)
+            const displayKey = key.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
+            return (
+              <div
+                key={key}
+                className="rounded-lg p-3"
+                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)" }}
+              >
+                <div className="text-[10px] font-medium uppercase tracking-wider mb-1 text-white/30">
+                  {displayKey}
+                </div>
+                <div
+                  className="text-xs font-mono truncate text-white/80"
+                  title={showTooltip ? String(env[key]) : undefined}
+                >
+                  {displayValue}
+                </div>
               </div>
-              <div className="text-xs font-mono truncate text-white/80" title={String(env[key])}>
-                {key === "app" ? String(env[key]).split(/[/\\]/).pop() || env[key] : String(env[key])}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
