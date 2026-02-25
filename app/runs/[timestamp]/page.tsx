@@ -168,8 +168,8 @@ export default async function RunDetailPage({
         <SectionTitle>Environment</SectionTitle>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
           {[...priorityEnv.filter((k) => env[k]), ...otherEnv.filter((k) => env[k])].map((key) => {
-            const tooltipKeys = ["gitMessage", "os", "app", "appiumServer"];
-            const showTooltip = tooltipKeys.includes(key);
+            const tooltipKeys = ["gitmessage", "os", "app", "appiumserver"];
+            const showTooltip = tooltipKeys.includes(key.toLowerCase());
             const displayValue = key === "app" ? String(env[key]).split(/[/\\]/).pop() || env[key] : String(env[key]);
             // camelCase → CAMEL_CASE 변환 (예: deviceName → DEVICE_NAME)
             const displayKey = key.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
@@ -183,7 +183,7 @@ export default async function RunDetailPage({
                   {displayKey}
                 </div>
                 <div
-                  className="text-xs font-mono truncate text-white/80"
+                  className={`text-xs font-mono truncate text-white/80 ${showTooltip ? "cursor-help" : ""}`}
                   title={showTooltip ? String(env[key]) : undefined}
                 >
                   {displayValue}
