@@ -12,11 +12,17 @@ export default function EnvCard({ label, value }: Props) {
   const [isTruncated, setIsTruncated] = useState(false);
 
   useEffect(() => {
-    const el = textRef.current;
-    if (el) {
-      // scrollWidth > clientWidth이면 텍스트가 잘린 것
-      setIsTruncated(el.scrollWidth > el.clientWidth);
-    }
+    const check = () => {
+      const el = textRef.current;
+      if (el) {
+        // 2px 여유를 두어 서브픽셀 오차로 인한 오탐 방지
+        setIsTruncated(el.scrollWidth > el.clientWidth + 2);
+      }
+    };
+    check();
+    // 윈도우 리사이즈 시에도 재확인
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, [value]);
 
   return (
