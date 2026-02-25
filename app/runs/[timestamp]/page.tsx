@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import StatusBadge from "@/components/StatusBadge";
 import ArtifactViewer from "@/components/ArtifactViewer";
+import EnvCard from "@/components/EnvCard";
 import { formatTimestamp } from "@/lib/utils";
 
 interface SuiteItem {
@@ -168,28 +169,9 @@ export default async function RunDetailPage({
         <SectionTitle>Environment</SectionTitle>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
           {[...priorityEnv.filter((k) => env[k]), ...otherEnv.filter((k) => env[k])].map((key) => {
-            const tooltipKeys = ["gitmessage", "os", "app", "appiumserver"];
-            const showTooltip = tooltipKeys.includes(key.toLowerCase());
             const displayValue = key === "app" ? String(env[key]).split(/[/\\]/).pop() || env[key] : String(env[key]);
-            // camelCase → CAMEL_CASE 변환 (예: deviceName → DEVICE_NAME)
             const displayKey = key.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
-            return (
-              <div
-                key={key}
-                className="rounded-lg p-3"
-                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)" }}
-              >
-                <div className="text-[10px] font-medium uppercase tracking-wider mb-1 text-white/30">
-                  {displayKey}
-                </div>
-                <div
-                  className={`text-xs font-mono truncate text-white/80 ${showTooltip ? "cursor-help" : ""}`}
-                  title={showTooltip ? String(env[key]) : undefined}
-                >
-                  {displayValue}
-                </div>
-              </div>
-            );
+            return <EnvCard key={key} label={displayKey} value={displayValue} />;
           })}
         </div>
       </div>
