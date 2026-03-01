@@ -86,7 +86,7 @@ export default function Filters() {
         {/* Date from */}
         <input
           type="date"
-          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-pointer"
+          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-text"
           style={controlStyle}
           value={searchParams.get("from") ?? ""}
           onChange={(e) => update("from", e.target.value)}
@@ -95,7 +95,7 @@ export default function Filters() {
         {/* Date to */}
         <input
           type="date"
-          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-pointer"
+          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-text"
           style={controlStyle}
           value={searchParams.get("to") ?? ""}
           onChange={(e) => update("to", e.target.value)}
