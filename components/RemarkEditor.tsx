@@ -76,7 +76,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
             <button
               onClick={startEdit}
               className="p-1.5 rounded-lg hover:bg-white/5 transition-colors"
-              title="수정"
+              title="Edit"
             >
               {/* 연필 아이콘 */}
               <svg className="w-3.5 h-3.5 text-white/40 hover:text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,7 +88,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
               onClick={handleDelete}
               disabled={saving}
               className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
-              title="삭제"
+              title="Delete"
             >
               {/* 휴지통 아이콘 */}
               <svg className="w-3.5 h-3.5 text-white/40 hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +106,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="메모를 입력하세요..."
+            placeholder="Enter a remark..."
             rows={3}
             autoFocus
             className="w-full rounded-lg px-3 py-2.5 text-sm text-white/90 placeholder-white/20 resize-y"
@@ -127,7 +127,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
                 border: "1px solid rgba(34,197,94,0.2)",
               }}
             >
-              {saving ? "저장 중..." : "저장"}
+              {saving ? "Saving..." : "Save"}
             </button>
             <button
               onClick={handleCancel}
@@ -138,7 +138,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
                 border: "1px solid rgba(255,255,255,0.08)",
               }}
             >
-              취소
+              Cancel
             </button>
           </div>
         </div>
@@ -166,7 +166,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          메모 추가
+          Add Remark
         </button>
       )}
     </div>
