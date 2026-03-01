@@ -28,10 +28,10 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
       <div className="glass rounded-2xl text-center py-20 animate-in">
         <div className="text-4xl mb-4 opacity-20">&#x1F50D;</div>
         <div className="text-lg font-medium text-white">
-          데이터가 없습니다
+          No data found
         </div>
         <div className="text-sm mt-1" style={{ color: "var(--muted)" }}>
-          필터를 변경하거나 새로운 테스트를 실행해보세요
+          Try changing filters or run a new test
         </div>
       </div>
     );

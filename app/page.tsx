@@ -110,7 +110,7 @@ export default async function Home({ searchParams }: Props) {
             Allure Dashboard
           </h1>
           <p className="text-xs sm:text-sm mt-1.5" style={{ color: "var(--muted)" }}>
-            QA 테스트 실행 결과 모니터링
+            QA Test Run Monitoring
           </p>
         </div>
         <div
