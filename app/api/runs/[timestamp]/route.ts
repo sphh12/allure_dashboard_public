@@ -38,9 +38,16 @@ export async function PATCH(
   // 허용된 필드만 업데이트
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data: any = {};
-  const allowed = ["gitMessage", "gitBranch", "gitCommit", "deviceName", "platform", "platformVersion"];
+  const allowed = ["gitMessage", "gitBranch", "gitCommit", "deviceName", "platform", "platformVersion", "remark"];
   for (const key of allowed) {
-    if (key in body) data[key] = body[key];
+    if (key in body) {
+      // remark는 빈 문자열이면 null로 저장 (삭제 처리)
+      if (key === "remark") {
+        data[key] = body[key]?.trim() || null;
+      } else {
+        data[key] = body[key];
+      }
+    }
   }
 
   const updated = await prisma.run.update({

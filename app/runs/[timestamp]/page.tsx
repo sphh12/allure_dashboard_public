@@ -4,6 +4,7 @@ import Link from "next/link";
 import StatusBadge from "@/components/StatusBadge";
 import ArtifactViewer from "@/components/ArtifactViewer";
 import EnvCard from "@/components/EnvCard";
+import RemarkEditor from "@/components/RemarkEditor";
 import { formatTimestamp } from "@/lib/utils";
 
 interface SuiteItem {
@@ -145,6 +146,9 @@ export default async function RunDetailPage({
           </div>
         </div>
       )}
+
+      {/* Remark */}
+      <RemarkEditor timestamp={run.timestamp} initialRemark={run.remark} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Suites */}

@@ -30,6 +30,7 @@ model Run {
   behaviors       Json?
   packages        Json?
   environment     Json?
+  remark          String?
   artifacts       Artifact[]
   createdAt       DateTime   @default(now())
 
