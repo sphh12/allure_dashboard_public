@@ -93,7 +93,13 @@ export default function Filters() {
             onChange={(e) => update("from", e.target.value)}
           />
           {!searchParams.get("from") && (
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-white/20 pointer-events-none">yyyy-mm-dd</span>
+            <span
+              className="absolute inset-0 flex items-center px-3 pr-8 text-sm text-white/20 cursor-text"
+              onClick={(e) => {
+                const input = e.currentTarget.parentElement?.querySelector("input");
+                if (input) input.focus();
+              }}
+            >yyyy-mm-dd</span>
           )}
         </div>
 
@@ -107,7 +113,13 @@ export default function Filters() {
             onChange={(e) => update("to", e.target.value)}
           />
           {!searchParams.get("to") && (
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-white/20 pointer-events-none">yyyy-mm-dd</span>
+            <span
+              className="absolute inset-0 flex items-center px-3 pr-8 text-sm text-white/20 cursor-text"
+              onClick={(e) => {
+                const input = e.currentTarget.parentElement?.querySelector("input");
+                if (input) input.focus();
+              }}
+            >yyyy-mm-dd</span>
           )}
         </div>
 
