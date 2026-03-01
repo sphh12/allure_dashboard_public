@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 
 const platforms = ["", "android", "ios"];
 const statuses = [
@@ -17,31 +17,91 @@ const controlStyle: React.CSSProperties = {
   border: "1px solid rgba(255,255,255,0.08)",
 };
 
-// 포커스 상태를 추적하여 placeholder/네이티브 텍스트 전환
+// 커스텀 날짜 입력: 숫자 연속 입력 → 자동 포맷 (20260202 → 2026-02-02)
 function DateInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
-  const [focused, setFocused] = useState(false);
-  const isEmpty = !value;
+  const [text, setText] = useState(value);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dateRef = useRef<HTMLInputElement>(null);
+
+  // 외부 value 변경 시 동기화 (Clear 버튼 등)
+  useEffect(() => {
+    setText(value);
+  }, [value]);
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 숫자만 추출 (최대 8자리)
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 8);
+
+    // 자동 포맷: 20260202 → 2026-02-02
+    let formatted = "";
+    if (digits.length > 0) formatted = digits.slice(0, 4);
+    if (digits.length > 4) formatted += "-" + digits.slice(4, 6);
+    if (digits.length > 6) formatted += "-" + digits.slice(6, 8);
+
+    setText(formatted);
+
+    // 커서를 끝으로 이동
+    requestAnimationFrame(() => {
+      if (inputRef.current) {
+        const pos = formatted.length;
+        inputRef.current.setSelectionRange(pos, pos);
+      }
+    });
+
+    // 완성된 날짜 (yyyy-mm-dd = 10자) → 필터 적용
+    if (formatted.length === 10) {
+      onChange(formatted);
+    } else if (digits.length === 0) {
+      onChange("");
+    }
+  };
+
+  // 포커스 해제 시 미완성 입력은 실제 값으로 복원
+  const handleBlur = () => {
+    if (text.length > 0 && text.length < 10) {
+      setText(value);
+    }
+  };
 
   return (
     <div className="relative">
       <input
-        type="date"
-        className={`px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-text ${isEmpty && !focused ? "date-empty" : ""}`}
+        ref={inputRef}
+        type="text"
+        placeholder={placeholder}
+        value={text}
+        onChange={handleInput}
+        onBlur={handleBlur}
+        maxLength={10}
+        className="px-3 py-2.5 pr-8 rounded-lg text-sm outline-none transition-all cursor-text w-[130px] placeholder:text-white/20"
         style={controlStyle}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
       />
-      {isEmpty && !focused && (
-        <span
-          className="absolute inset-0 flex items-center px-3 pr-8 text-sm text-white/20 cursor-text"
-          onClick={(e) => {
-            const input = e.currentTarget.parentElement?.querySelector("input");
-            if (input) input.focus();
-          }}
-        >{placeholder}</span>
-      )}
+      {/* 캘린더 아이콘 */}
+      <button
+        type="button"
+        className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/5 transition-colors cursor-pointer"
+        onClick={() => {
+          try { dateRef.current?.showPicker(); } catch { dateRef.current?.click(); }
+        }}
+      >
+        <svg className="w-3.5 h-3.5 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="18" rx="2" strokeWidth="2" />
+          <path d="M16 2v4M8 2v4M3 10h18" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      </button>
+      {/* 숨겨진 native date picker (캘린더 아이콘용) */}
+      <input
+        ref={dateRef}
+        type="date"
+        className="sr-only"
+        tabIndex={-1}
+        value={value}
+        onChange={(e) => {
+          const v = e.target.value;
+          setText(v);
+          onChange(v);
+        }}
+      />
     </div>
   );
 }
