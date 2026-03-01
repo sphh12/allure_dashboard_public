@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 const platforms = ["", "android", "ios"];
 const statuses = [
@@ -10,6 +10,41 @@ const statuses = [
   { value: "broken", label: "BROKEN", color: "var(--broken)", bg: "var(--broken-dim)" },
   { value: "skip", label: "SKIP", color: "var(--skipped)", bg: "var(--skipped-dim)" },
 ];
+
+const controlStyle: React.CSSProperties = {
+  background: "rgba(255,255,255,0.04)",
+  color: "var(--text)",
+  border: "1px solid rgba(255,255,255,0.08)",
+};
+
+// 포커스 상태를 추적하여 placeholder/네이티브 텍스트 전환
+function DateInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
+  const [focused, setFocused] = useState(false);
+  const isEmpty = !value;
+
+  return (
+    <div className="relative">
+      <input
+        type="date"
+        className={`px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-text ${isEmpty && !focused ? "date-empty" : ""}`}
+        style={controlStyle}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+      />
+      {isEmpty && !focused && (
+        <span
+          className="absolute inset-0 flex items-center px-3 pr-8 text-sm text-white/20 cursor-text"
+          onClick={(e) => {
+            const input = e.currentTarget.parentElement?.querySelector("input");
+            if (input) input.focus();
+          }}
+        >{placeholder}</span>
+      )}
+    </div>
+  );
+}
 
 export default function Filters() {
   const router = useRouter();
@@ -34,12 +69,6 @@ export default function Filters() {
   const clearAll = useCallback(() => {
     router.push("/");
   }, [router]);
-
-  const controlStyle: React.CSSProperties = {
-    background: "rgba(255,255,255,0.04)",
-    color: "var(--text)",
-    border: "1px solid rgba(255,255,255,0.08)",
-  };
 
   return (
     <div className="glass-bright rounded-xl p-4 space-y-3">
@@ -84,44 +113,18 @@ export default function Filters() {
         </select>
 
         {/* Date from */}
-        <div className="relative">
-          <input
-            type="date"
-            className={`px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-text ${!searchParams.get("from") ? "date-empty" : ""}`}
-            style={controlStyle}
-            value={searchParams.get("from") ?? ""}
-            onChange={(e) => update("from", e.target.value)}
-          />
-          {!searchParams.get("from") && (
-            <span
-              className="absolute inset-0 flex items-center px-3 pr-8 text-sm text-white/20 cursor-text"
-              onClick={(e) => {
-                const input = e.currentTarget.parentElement?.querySelector("input");
-                if (input) input.focus();
-              }}
-            >yyyy-mm-dd</span>
-          )}
-        </div>
+        <DateInput
+          value={searchParams.get("from") ?? ""}
+          onChange={(v) => update("from", v)}
+          placeholder="yyyy-mm-dd"
+        />
 
         {/* Date to */}
-        <div className="relative">
-          <input
-            type="date"
-            className={`px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-text ${!searchParams.get("to") ? "date-empty" : ""}`}
-            style={controlStyle}
-            value={searchParams.get("to") ?? ""}
-            onChange={(e) => update("to", e.target.value)}
-          />
-          {!searchParams.get("to") && (
-            <span
-              className="absolute inset-0 flex items-center px-3 pr-8 text-sm text-white/20 cursor-text"
-              onClick={(e) => {
-                const input = e.currentTarget.parentElement?.querySelector("input");
-                if (input) input.focus();
-              }}
-            >yyyy-mm-dd</span>
-          )}
-        </div>
+        <DateInput
+          value={searchParams.get("to") ?? ""}
+          onChange={(v) => update("to", v)}
+          placeholder="yyyy-mm-dd"
+        />
 
         {/* Clear */}
         {hasFilters && (
