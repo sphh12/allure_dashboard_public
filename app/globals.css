@@ -85,6 +85,11 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
+/* date picker 캘린더 아이콘 */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
 /* 인풋 포커스 */
 input:focus,
 select:focus {
