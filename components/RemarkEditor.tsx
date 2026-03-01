@@ -75,7 +75,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
           <div className="flex items-center gap-2">
             <button
               onClick={startEdit}
-              className="p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
               title="Edit"
             >
               {/* 연필 아이콘 */}
@@ -87,7 +87,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
             <button
               onClick={handleDelete}
               disabled={saving}
-              className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-red-500/10 transition-colors cursor-pointer"
               title="Delete"
             >
               {/* 휴지통 아이콘 */}
@@ -120,7 +120,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
             <button
               onClick={handleSave}
               disabled={saving || !draft.trim()}
-              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors disabled:opacity-40"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors disabled:opacity-40 cursor-pointer"
               style={{
                 background: "rgba(34,197,94,0.15)",
                 color: "#6ee7b7",
@@ -132,7 +132,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
             <button
               onClick={handleCancel}
               disabled={saving}
-              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors text-white/50 hover:text-white/70"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors text-white/50 hover:text-white/70 cursor-pointer"
               style={{
                 background: "rgba(255,255,255,0.03)",
                 border: "1px solid rgba(255,255,255,0.08)",
@@ -157,7 +157,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
         /* remark 없음 - 추가 버튼 */
         <button
           onClick={startEdit}
-          className="flex items-center gap-2 px-3 py-2 text-xs rounded-lg transition-colors text-white/30 hover:text-white/60 hover:bg-white/3"
+          className="flex items-center gap-2 px-3 py-2 text-xs rounded-lg transition-colors text-white/30 hover:text-white/60 hover:bg-white/3 cursor-pointer"
           style={{
             background: "rgba(255,255,255,0.02)",
             border: "1px dashed rgba(255,255,255,0.1)",
