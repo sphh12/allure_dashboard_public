@@ -84,22 +84,32 @@ export default function Filters() {
         </select>
 
         {/* Date from */}
-        <input
-          type="date"
-          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-text"
-          style={controlStyle}
-          value={searchParams.get("from") ?? ""}
-          onChange={(e) => update("from", e.target.value)}
-        />
+        <div className="relative">
+          <input
+            type="date"
+            className={`px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-text ${!searchParams.get("from") ? "date-empty" : ""}`}
+            style={controlStyle}
+            value={searchParams.get("from") ?? ""}
+            onChange={(e) => update("from", e.target.value)}
+          />
+          {!searchParams.get("from") && (
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-white/20 pointer-events-none">yyyy-mm-dd</span>
+          )}
+        </div>
 
         {/* Date to */}
-        <input
-          type="date"
-          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-text"
-          style={controlStyle}
-          value={searchParams.get("to") ?? ""}
-          onChange={(e) => update("to", e.target.value)}
-        />
+        <div className="relative">
+          <input
+            type="date"
+            className={`px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-text ${!searchParams.get("to") ? "date-empty" : ""}`}
+            style={controlStyle}
+            value={searchParams.get("to") ?? ""}
+            onChange={(e) => update("to", e.target.value)}
+          />
+          {!searchParams.get("to") && (
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-white/20 pointer-events-none">yyyy-mm-dd</span>
+          )}
+        </div>
 
         {/* Clear */}
         {hasFilters && (
