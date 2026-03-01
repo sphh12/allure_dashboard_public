@@ -85,19 +85,25 @@ export default function Filters() {
 
         {/* Date from */}
         <input
-          type="date"
-          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-pointer"
+          type={searchParams.get("from") ? "date" : "text"}
+          placeholder="From"
+          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-pointer placeholder:text-white/20 w-[130px]"
           style={controlStyle}
           value={searchParams.get("from") ?? ""}
+          onFocus={(e) => { e.currentTarget.type = "date"; }}
+          onBlur={(e) => { if (!e.currentTarget.value) e.currentTarget.type = "text"; }}
           onChange={(e) => update("from", e.target.value)}
         />
 
         {/* Date to */}
         <input
-          type="date"
-          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-pointer"
+          type={searchParams.get("to") ? "date" : "text"}
+          placeholder="To"
+          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-pointer placeholder:text-white/20 w-[130px]"
           style={controlStyle}
           value={searchParams.get("to") ?? ""}
+          onFocus={(e) => { e.currentTarget.type = "date"; }}
+          onBlur={(e) => { if (!e.currentTarget.value) e.currentTarget.type = "text"; }}
           onChange={(e) => update("to", e.target.value)}
         />
 
