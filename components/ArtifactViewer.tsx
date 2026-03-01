@@ -218,7 +218,7 @@ function TextViewer({ artifact, language }: { artifact: Artifact; language: stri
       setContent(text);
       setExpanded(true);
     } catch {
-      setContent("[로드 실패]");
+      setContent("[Load failed]");
       setExpanded(true);
     } finally {
       setLoading(false);
@@ -249,7 +249,7 @@ function TextViewer({ artifact, language }: { artifact: Artifact; language: stri
             <span className="text-[10px] text-white/40">{formatSize(artifact.sizeBytes)}</span>
           )}
           {loading ? (
-            <span className="text-[10px] text-white/40">로딩...</span>
+            <span className="text-[10px] text-white/40">Loading...</span>
           ) : (
             <ExpandIcon expanded={expanded} />
           )}
