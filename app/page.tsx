@@ -62,8 +62,9 @@ export default async function Home({ searchParams }: Props) {
   if (sp.status) where.status = sp.status;
   if (sp.from || sp.to) {
     where.timestamp = {};
-    if (sp.from) where.timestamp.gte = sp.from;
-    if (sp.to) where.timestamp.lte = sp.to;
+    // yyyy-mm-dd → yyyymmdd 변환 (DB timestamp 형식: 20260220_143000)
+    if (sp.from) where.timestamp.gte = sp.from.replace(/-/g, "");
+    if (sp.to) where.timestamp.lte = sp.to.replace(/-/g, "") + "_999999";
   }
   if (sp.q) {
     where.OR = [
