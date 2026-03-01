@@ -19,6 +19,7 @@ interface RunRow {
   broken: number;
   skipped: number;
   durationText: string | null;
+  remark: string | null;
 }
 
 export default function RunsTable({ runs }: { runs: RunRow[] }) {
@@ -50,6 +51,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                 <Th align="center" style={{ width: 90 }}>Result</Th>
                 <Th align="center" style={{ width: 180 }}>Test Results</Th>
                 <Th align="right" style={{ width: 90 }}>Duration</Th>
+                <Th align="left" style={{ width: 150 }}>Remark</Th>
               </tr>
             </thead>
             <tbody>
@@ -141,6 +143,15 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                           {run.durationText ?? "-"}
                         </span>
                       </td>
+                      <td className="px-4 py-4">
+                        {run.remark ? (
+                          <div className="text-xs text-white/60 truncate max-w-[140px]" title={run.remark}>
+                            {run.remark}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-white/15">-</span>
+                        )}
+                      </td>
                     </tr>
                   </Link>
                 );
@@ -196,6 +207,17 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                     {run.durationText ?? "-"}
                   </div>
                 </div>
+
+                {/* Remark */}
+                {run.remark && (
+                  <div
+                    className="text-xs text-white/50 truncate mb-2 px-2 py-1 rounded"
+                    style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)" }}
+                    title={run.remark}
+                  >
+                    {run.remark}
+                  </div>
+                )}
 
                 {/* 하단: 테스트 결과 바 */}
                 <div className="flex items-center gap-2">

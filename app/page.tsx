@@ -37,6 +37,7 @@ export default async function Home({ searchParams }: Props) {
       broken: true,
       skipped: true,
       durationText: true,
+      remark: true,
       createdAt: true,
     },
   });
@@ -94,6 +95,7 @@ export default async function Home({ searchParams }: Props) {
           broken: true,
           skipped: true,
           durationText: true,
+          remark: true,
           createdAt: true,
         },
       })
