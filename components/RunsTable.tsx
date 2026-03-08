@@ -44,7 +44,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr style={{ background: "rgba(255,255,255,0.03)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+              <tr style={{ background: "var(--border)", borderBottom: "1px solid var(--border-light)" }}>
                 <Th align="left" style={{ width: 150 }}>Timestamp</Th>
                 <Th align="left">Device</Th>
                 <Th align="left">Branch</Th>
@@ -114,7 +114,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 rounded-full overflow-hidden flex" style={{ background: "rgba(255,255,255,0.06)" }}>
+                          <div className="flex-1 h-2 rounded-full overflow-hidden flex" style={{ background: "var(--border)" }}>
                             {run.passed > 0 && (
                               <div style={{ width: `${(run.passed / run.total) * 100}%`, background: "var(--passed)" }} />
                             )}
@@ -212,7 +212,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                 {run.remark && (
                   <div
                     className="text-xs text-white/50 truncate mb-2 px-2 py-1 rounded"
-                    style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)" }}
+                    style={{ background: "var(--border)", border: "1px solid var(--border-light)" }}
                     title={run.remark}
                   >
                     {run.remark}
@@ -221,7 +221,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
 
                 {/* 하단: 테스트 결과 바 */}
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 h-2 rounded-full overflow-hidden flex" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <div className="flex-1 h-2 rounded-full overflow-hidden flex" style={{ background: "var(--border)" }}>
                     {run.passed > 0 && (
                       <div style={{ width: `${(run.passed / run.total) * 100}%`, background: "var(--passed)" }} />
                     )}

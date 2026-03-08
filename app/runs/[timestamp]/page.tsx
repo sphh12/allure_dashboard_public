@@ -98,7 +98,7 @@ export default async function RunDetailPage({
           <div className="flex flex-col items-center">
             <div className="relative w-20 h-20">
               <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
-                <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
+                <circle cx="40" cy="40" r="34" fill="none" stroke="var(--border)" strokeWidth="6" />
                 <circle
                   cx="40" cy="40" r="34" fill="none"
                   stroke={passRate === 100 ? "var(--passed)" : passRate >= 70 ? "var(--broken)" : "var(--failed)"}
@@ -114,24 +114,34 @@ export default async function RunDetailPage({
           </div>
         </div>
 
-        {/* 통계 */}
-        <div className="grid grid-cols-5 gap-3">
-          {[
-            { label: "Total", value: run.total, color: "#ffffff", bg: "rgba(255,255,255,0.05)", border: "rgba(255,255,255,0.1)" },
-            { label: "Passed", value: run.passed, color: "var(--passed)", bg: "var(--passed-dim)", border: "rgba(34,197,94,0.15)" },
-            { label: "Failed", value: run.failed, color: "var(--failed)", bg: "var(--failed-dim)", border: "rgba(239,68,68,0.15)" },
-            { label: "Broken", value: run.broken, color: "var(--broken)", bg: "var(--broken-dim)", border: "rgba(245,158,11,0.15)" },
-            { label: "Skipped", value: run.skipped, color: "var(--skipped)", bg: "var(--skipped-dim)", border: "rgba(107,114,128,0.15)" },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="rounded-xl py-3 text-center"
-              style={{ background: item.bg, border: `1px solid ${item.border}` }}
-            >
-              <div className="text-xl font-bold tabular-nums" style={{ color: item.color }}>{item.value}</div>
-              <div className="text-[10px] font-medium uppercase tracking-wider" style={{ color: "var(--muted)" }}>{item.label}</div>
-            </div>
-          ))}
+        {/* 통계 — Total 강조 + 상태 카드 */}
+        <div className="flex items-stretch gap-3">
+          {/* Total KPI */}
+          <div
+            className="rounded-xl px-5 py-3 flex flex-col items-center justify-center shrink-0"
+            style={{ background: "linear-gradient(135deg, rgba(100,116,139,0.15), rgba(51,65,85,0.25))", border: "1px solid var(--border-light)" }}
+          >
+            <div className="text-3xl md:text-4xl font-extrabold tabular-nums text-white">{run.total}</div>
+            <div className="text-[10px] font-medium uppercase tracking-wider" style={{ color: "var(--muted)" }}>Total</div>
+          </div>
+          {/* 상태 카드 */}
+          <div className="grid grid-cols-4 gap-3 flex-1">
+            {[
+              { label: "Passed", value: run.passed, color: "var(--passed)", bg: "linear-gradient(135deg, rgba(34,197,94,0.08), rgba(22,163,74,0.18))", border: "rgba(34,197,94,0.15)" },
+              { label: "Failed", value: run.failed, color: "var(--failed)", bg: "linear-gradient(135deg, rgba(239,68,68,0.08), rgba(220,38,38,0.18))", border: "rgba(239,68,68,0.15)" },
+              { label: "Broken", value: run.broken, color: "var(--broken)", bg: "linear-gradient(135deg, rgba(245,158,11,0.08), rgba(217,119,6,0.18))", border: "rgba(245,158,11,0.15)" },
+              { label: "Skipped", value: run.skipped, color: "var(--skipped)", bg: "linear-gradient(135deg, rgba(107,114,128,0.08), rgba(75,85,99,0.18))", border: "rgba(107,114,128,0.15)" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-xl py-3 text-center"
+                style={{ background: item.bg, border: `1px solid ${item.border}` }}
+              >
+                <div className="text-xl font-bold tabular-nums" style={{ color: item.color }}>{item.value}</div>
+                <div className="text-[10px] font-medium uppercase tracking-wider" style={{ color: "var(--muted)" }}>{item.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -205,7 +215,7 @@ function InfoChip({ label, value, mono, wide }: { label: string; value: string; 
   return (
     <div
       className={`rounded-lg px-3 py-2 ${wide ? "flex-1 min-w-[200px]" : ""}`}
-      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+      style={{ background: "var(--border)", border: "1px solid var(--border-light)" }}
     >
       <span className="text-[10px] uppercase tracking-wider mr-2 text-white/30">{label}</span>
       <span className={`text-sm text-white ${mono ? "font-mono" : ""}`}>{value}</span>
@@ -222,7 +232,7 @@ function SuiteList({ items }: { items: SuiteItem[] }) {
           <div
             key={i}
             className="flex items-center gap-3 py-2.5 px-3 rounded-lg"
-            style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)" }}
+            style={{ background: "var(--border)", border: "1px solid var(--border-light)" }}
           >
             <span className="flex-1 text-sm font-medium truncate text-white/90">{item.name}</span>
 
@@ -232,7 +242,7 @@ function SuiteList({ items }: { items: SuiteItem[] }) {
               <span style={{ color: item.broken > 0 ? "var(--broken)" : "var(--muted)" }}>{item.broken}</span>
             </div>
 
-            <div className="w-20 h-1.5 rounded-full overflow-hidden flex" style={{ background: "rgba(255,255,255,0.06)" }}>
+            <div className="w-20 h-1.5 rounded-full overflow-hidden flex" style={{ background: "var(--border)" }}>
               {item.passed > 0 && <div style={{ width: `${(item.passed / item.total) * 100}%`, background: "var(--passed)" }} />}
               {item.failed > 0 && <div style={{ width: `${(item.failed / item.total) * 100}%`, background: "var(--failed)" }} />}
               {item.broken > 0 && <div style={{ width: `${(item.broken / item.total) * 100}%`, background: "var(--broken)" }} />}

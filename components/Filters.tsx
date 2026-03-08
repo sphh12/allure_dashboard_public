@@ -1,20 +1,14 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useCallback, useState, useEffect, useRef, useMemo } from "react";
 
 const platforms = ["", "android", "ios"];
-const statuses = [
-  { value: "pass", label: "PASS", color: "var(--passed)", bg: "var(--passed-dim)" },
-  { value: "fail", label: "FAIL", color: "var(--failed)", bg: "var(--failed-dim)" },
-  { value: "broken", label: "BROKEN", color: "var(--broken)", bg: "var(--broken-dim)" },
-  { value: "skip", label: "SKIP", color: "var(--skipped)", bg: "var(--skipped-dim)" },
-];
 
 const controlStyle: React.CSSProperties = {
-  background: "rgba(255,255,255,0.04)",
+  background: "var(--border)",
   color: "var(--text)",
-  border: "1px solid rgba(255,255,255,0.08)",
+  border: "1px solid var(--border-light)",
 };
 
 // 커스텀 날짜 입력: 숫자 연속 입력 → 자동 포맷 (20260202 → 2026-02-02)
@@ -109,8 +103,6 @@ function DateInput({ value, onChange, placeholder }: { value: string; onChange: 
 export default function Filters() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activeStatus = searchParams.get("status") ?? "";
-
   const hasFilters = searchParams.toString().length > 0;
 
   const update = useCallback(
@@ -121,13 +113,23 @@ export default function Filters() {
       } else {
         params.delete(key);
       }
-      router.push("?" + params.toString());
+      router.push("?" + params.toString(), { scroll: false });
     },
     [router, searchParams]
   );
 
+  // 디바운스 검색 — 300ms 후 자동 검색
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debouncedSearch = useMemo(
+    () => (value: string) => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => update("q", value), 300);
+    },
+    [update]
+  );
+
   const clearAll = useCallback(() => {
-    router.push("/");
+    router.push("/", { scroll: false });
   }, [router]);
 
   return (
@@ -146,13 +148,18 @@ export default function Filters() {
             <path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round" />
           </svg>
           <input
+            key={searchParams.get("q") ?? ""}
             type="text"
-            placeholder="timestamp, branch, device, commit..."
+            placeholder="timestamp, branch, device, commit, remark..."
             defaultValue={searchParams.get("q") ?? ""}
             className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm outline-none transition-all placeholder:text-white/20"
             style={controlStyle}
+            onChange={(e) => debouncedSearch(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") update("q", e.currentTarget.value);
+              if (e.key === "Enter") {
+                if (debounceRef.current) clearTimeout(debounceRef.current);
+                update("q", e.currentTarget.value);
+              }
             }}
           />
         </div>
@@ -191,41 +198,13 @@ export default function Filters() {
           <button
             onClick={clearAll}
             className="px-3 py-2.5 rounded-lg text-xs font-medium transition-all hover:opacity-80 cursor-pointer text-white"
-            style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
+            style={{ background: "var(--border-light)", border: "1px solid var(--border-light)" }}
           >
             Clear
           </button>
         )}
       </div>
 
-      {/* 하단: Status 버튼 그룹 */}
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="text-[11px] font-medium uppercase tracking-wider mr-1" style={{ color: "var(--muted)" }}>
-          Status
-        </span>
-        {statuses.map((s) => {
-          const isActive = activeStatus === s.value;
-          return (
-            <button
-              key={s.value}
-              onClick={() => update("status", isActive ? "" : s.value)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wider transition-all cursor-pointer hover:scale-105"
-              style={{
-                background: isActive ? s.bg.replace("0.10", "0.25") : "rgba(255,255,255,0.04)",
-                color: isActive ? s.color : "var(--muted)",
-                border: isActive ? `1.5px solid ${s.color}` : "1px solid rgba(255,255,255,0.08)",
-                boxShadow: isActive ? `0 0 8px ${s.color}30` : "none",
-              }}
-            >
-              <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ background: isActive ? s.color : "var(--muted)" }}
-              />
-              {s.label}
-            </button>
-          );
-        })}
-      </div>
     </div>
   );
 }

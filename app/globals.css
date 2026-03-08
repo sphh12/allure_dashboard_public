@@ -30,16 +30,59 @@
   --skipped-dim: rgba(107, 114, 128, 0.10);
   --accent: #a78bfa;
   --accent-dim: rgba(167, 139, 250, 0.10);
+  --accent2: #22d3ee;
+  --accent2-dim: rgba(34, 211, 238, 0.10);
+  --chart-grid: rgba(255, 255, 255, 0.05);
+  --chart-axis: rgba(255, 255, 255, 0.08);
+  --tooltip-bg: rgba(18, 18, 24, 0.95);
+}
+
+/* 라이트 모드 */
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5f6fa;
+  --bg2: #ebedf3;
+  --panel: rgba(255, 255, 255, 0.8);
+  --panel-solid: #ffffff;
+  --panel-hover: rgba(245, 246, 250, 0.9);
+  --text: #1e293b;
+  --white: #0f172a;
+  --muted: #64748b;
+  --border: rgba(0, 0, 0, 0.06);
+  --border-light: rgba(0, 0, 0, 0.1);
+  --passed: #16a34a;
+  --passed-dim: rgba(22, 163, 74, 0.08);
+  --failed: #dc2626;
+  --failed-dim: rgba(220, 38, 38, 0.08);
+  --broken: #d97706;
+  --broken-dim: rgba(217, 119, 6, 0.08);
+  --skipped: #6b7280;
+  --skipped-dim: rgba(107, 114, 128, 0.08);
+  --accent: #7c3aed;
+  --accent-dim: rgba(124, 58, 237, 0.08);
+  --accent2: #0891b2;
+  --accent2-dim: rgba(8, 145, 178, 0.08);
+  --chart-grid: rgba(0, 0, 0, 0.06);
+  --chart-axis: rgba(0, 0, 0, 0.1);
+  --tooltip-bg: rgba(255, 255, 255, 0.95);
 }
 
 body {
   background: var(--bg);
   background-image:
-    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(167, 139, 250, 0.04), transparent),
-    radial-gradient(ellipse 50% 40% at 90% 100%, rgba(34, 197, 94, 0.03), transparent);
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(167, 139, 250, 0.06), transparent),
+    radial-gradient(ellipse 50% 40% at 90% 100%, rgba(34, 211, 238, 0.04), transparent),
+    radial-gradient(ellipse 40% 30% at 10% 80%, rgba(34, 197, 94, 0.03), transparent);
   color: var(--text);
   min-height: 100vh;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+[data-theme="light"] body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(124, 58, 237, 0.04), transparent),
+    radial-gradient(ellipse 50% 40% at 90% 100%, rgba(8, 145, 178, 0.03), transparent);
 }
 
 /* 글래스모피즘 패널 */
@@ -58,15 +101,37 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* 테이블 행 호버 */
+[data-theme="light"] .glass {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .glass-bright {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: var(--border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* 테이블 행 호버 + 교대 배경 */
 .run-row {
   transition: all 0.15s ease;
 }
+.run-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.015);
+}
 .run-row:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.04) !important;
 }
 .run-row:hover td:first-child {
-  box-shadow: inset 3px 0 0 var(--white);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+[data-theme="light"] .run-row:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
+[data-theme="light"] .run-row:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
 }
 
 /* 스크롤바 커스텀 */
@@ -85,17 +150,57 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* 인풋 포커스 */
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.22);
+}
+
+/* 인풋 포커스 — accent 보라 */
 input:focus,
 select:focus {
-  border-color: rgba(255, 255, 255, 0.25) !important;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+  border-color: rgba(167, 139, 250, 0.4) !important;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
 }
 
 /* 셀렉트 옵션 */
 select option {
-  background-color: #121218;
+  background-color: var(--panel-solid);
   color: var(--text);
+}
+
+/* recharts 선택 테두리 제거 */
+.recharts-surface:focus,
+.recharts-surface *:focus {
+  outline: none;
+}
+.recharts-wrapper text {
+  outline: none;
+  user-select: none;
+}
+
+/* 라이트 모드: Tailwind text-white 오버라이드 */
+[data-theme="light"] .text-white {
+  color: var(--white) !important;
+}
+[data-theme="light"] .text-white\/80 {
+  color: color-mix(in srgb, var(--white) 80%, transparent) !important;
+}
+[data-theme="light"] .text-white\/60 {
+  color: color-mix(in srgb, var(--white) 60%, transparent) !important;
+}
+[data-theme="light"] .text-white\/50 {
+  color: color-mix(in srgb, var(--white) 50%, transparent) !important;
+}
+[data-theme="light"] .text-white\/15 {
+  color: color-mix(in srgb, var(--white) 15%, transparent) !important;
+}
+[data-theme="light"] .hover\:bg-white\/5:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+[data-theme="light"] .bg-white\/5 {
+  background: rgba(0, 0, 0, 0.05) !important;
 }
 
 /* 애니메이션 */
