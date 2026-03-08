@@ -78,7 +78,7 @@ function DateInput({ value, onChange, placeholder }: { value: string; onChange: 
           try { dateRef.current?.showPicker(); } catch { dateRef.current?.click(); }
         }}
       >
-        <svg className="w-3.5 h-3.5 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-3.5 h-3.5" style={{ color: "var(--muted)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <rect x="3" y="4" width="18" height="18" rx="2" strokeWidth="2" />
           <path d="M16 2v4M8 2v4M3 10h18" strokeWidth="2" strokeLinecap="round" />
         </svg>
@@ -139,7 +139,8 @@ export default function Filters() {
         {/* 검색 아이콘 + 인풋 */}
         <div className="relative flex-1 min-w-[200px]">
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
+            style={{ color: "var(--muted)" }}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -197,8 +198,8 @@ export default function Filters() {
         {hasFilters && (
           <button
             onClick={clearAll}
-            className="px-3 py-2.5 rounded-lg text-xs font-medium transition-all hover:opacity-80 cursor-pointer text-white"
-            style={{ background: "var(--border-light)", border: "1px solid var(--border-light)" }}
+            className="px-3 py-2.5 rounded-lg text-xs font-medium transition-all hover:opacity-80 cursor-pointer"
+            style={{ background: "var(--border-light)", border: "1px solid var(--border-light)", color: "var(--white)" }}
           >
             Clear
           </button>

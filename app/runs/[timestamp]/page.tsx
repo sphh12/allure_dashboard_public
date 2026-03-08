@@ -48,7 +48,7 @@ export default async function RunDetailPage({
       {/* 네비게이션 */}
       <Link
         href="/"
-        className="inline-flex items-center gap-2 text-sm mb-8 hover:text-white transition-colors"
+        className="inline-flex items-center gap-2 text-sm mb-8 transition-colors"
         style={{ color: "var(--muted)" }}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +62,7 @@ export default async function RunDetailPage({
         <div className="flex items-start justify-between mb-5">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold font-mono tracking-tight text-white">
+              <h1 className="text-2xl font-bold font-mono tracking-tight" style={{ color: "var(--white)" }}>
                 {formatTimestamp(run.timestamp)}
               </h1>
               <StatusBadge status={run.status} size="lg" />
@@ -74,7 +74,7 @@ export default async function RunDetailPage({
                     <circle cx="12" cy="12" r="10" strokeWidth="2" />
                     <path strokeLinecap="round" d="M12 6v6l4 2" strokeWidth="2" />
                   </svg>
-                  <span className="text-white/70">{run.durationText}</span>
+                  <span style={{ color: "var(--text)" }}>{run.durationText}</span>
                 </span>
               )}
               {env.platform && (
@@ -82,13 +82,13 @@ export default async function RunDetailPage({
                   <span
                     className="w-5 h-5 rounded flex items-center justify-center text-[9px] font-bold"
                     style={{
-                      background: env.platform === "ios" ? "rgba(167,139,250,0.12)" : "rgba(52,211,153,0.12)",
-                      color: env.platform === "ios" ? "#c4b5fd" : "#6ee7b7",
+                      background: env.platform === "ios" ? "var(--platform-ios-bg)" : "var(--platform-aos-bg)",
+                      color: env.platform === "ios" ? "var(--platform-ios)" : "var(--platform-aos)",
                     }}
                   >
                     {env.platform === "ios" ? "iOS" : "AOS"}
                   </span>
-                  <span className="text-white/70">{env.deviceName}</span>
+                  <span style={{ color: "var(--text)" }}>{env.deviceName}</span>
                 </span>
               )}
             </div>
@@ -107,10 +107,10 @@ export default async function RunDetailPage({
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-lg font-bold tabular-nums text-white">{passRate}%</span>
+                <span className="text-lg font-bold tabular-nums" style={{ color: "var(--white)" }}>{passRate}%</span>
               </div>
             </div>
-            <span className="text-[10px] mt-1 text-white/30 uppercase tracking-wider">Pass Rate</span>
+            <span className="text-[10px] mt-1 uppercase tracking-wider" style={{ color: "var(--muted)" }}>Pass Rate</span>
           </div>
         </div>
 
@@ -121,7 +121,7 @@ export default async function RunDetailPage({
             className="rounded-xl px-5 py-3 flex flex-col items-center justify-center shrink-0"
             style={{ background: "linear-gradient(135deg, rgba(100,116,139,0.15), rgba(51,65,85,0.25))", border: "1px solid var(--border-light)" }}
           >
-            <div className="text-3xl md:text-4xl font-extrabold tabular-nums text-white">{run.total}</div>
+            <div className="text-3xl md:text-4xl font-extrabold tabular-nums" style={{ color: "var(--white)" }}>{run.total}</div>
             <div className="text-[10px] font-medium uppercase tracking-wider" style={{ color: "var(--muted)" }}>Total</div>
           </div>
           {/* 상태 카드 */}
@@ -205,7 +205,7 @@ export default async function RunDetailPage({
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-xs font-semibold uppercase tracking-widest text-white/40">
+    <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
       {children}
     </h2>
   );
@@ -217,8 +217,8 @@ function InfoChip({ label, value, mono, wide }: { label: string; value: string; 
       className={`rounded-lg px-3 py-2 ${wide ? "flex-1 min-w-[200px]" : ""}`}
       style={{ background: "var(--border)", border: "1px solid var(--border-light)" }}
     >
-      <span className="text-[10px] uppercase tracking-wider mr-2 text-white/30">{label}</span>
-      <span className={`text-sm text-white ${mono ? "font-mono" : ""}`}>{value}</span>
+      <span className="text-[10px] uppercase tracking-wider mr-2" style={{ color: "var(--muted)" }}>{label}</span>
+      <span className={`text-sm ${mono ? "font-mono" : ""}`} style={{ color: "var(--white)" }}>{value}</span>
     </div>
   );
 }
@@ -234,7 +234,7 @@ function SuiteList({ items }: { items: SuiteItem[] }) {
             className="flex items-center gap-3 py-2.5 px-3 rounded-lg"
             style={{ background: "var(--border)", border: "1px solid var(--border-light)" }}
           >
-            <span className="flex-1 text-sm font-medium truncate text-white/90">{item.name}</span>
+            <span className="flex-1 text-sm font-medium truncate" style={{ color: "var(--text)" }}>{item.name}</span>
 
             <div className="flex items-center gap-2 text-xs tabular-nums">
               <span style={{ color: "var(--passed)" }}>{item.passed}</span>

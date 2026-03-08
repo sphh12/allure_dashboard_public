@@ -35,6 +35,12 @@
   --chart-grid: rgba(255, 255, 255, 0.05);
   --chart-axis: rgba(255, 255, 255, 0.08);
   --tooltip-bg: rgba(18, 18, 24, 0.95);
+  --platform-aos: #6ee7b7;
+  --platform-ios: #c4b5fd;
+  --platform-aos-bg: rgba(52, 211, 153, 0.12);
+  --platform-ios-bg: rgba(167, 139, 250, 0.12);
+  --subtle-bg: rgba(255, 255, 255, 0.02);
+  --subtle-border: rgba(255, 255, 255, 0.1);
 }
 
 /* 라이트 모드 */
@@ -65,6 +71,12 @@
   --chart-grid: rgba(0, 0, 0, 0.06);
   --chart-axis: rgba(0, 0, 0, 0.1);
   --tooltip-bg: rgba(255, 255, 255, 0.95);
+  --platform-aos: #059669;
+  --platform-ios: #7c3aed;
+  --platform-aos-bg: rgba(5, 150, 105, 0.08);
+  --platform-ios-bg: rgba(124, 58, 237, 0.08);
+  --subtle-bg: rgba(0, 0, 0, 0.03);
+  --subtle-border: rgba(0, 0, 0, 0.08);
 }
 
 body {
@@ -184,8 +196,14 @@ select option {
 [data-theme="light"] .text-white {
   color: var(--white) !important;
 }
+[data-theme="light"] .text-white\/90 {
+  color: color-mix(in srgb, var(--white) 90%, transparent) !important;
+}
 [data-theme="light"] .text-white\/80 {
   color: color-mix(in srgb, var(--white) 80%, transparent) !important;
+}
+[data-theme="light"] .text-white\/70 {
+  color: color-mix(in srgb, var(--white) 70%, transparent) !important;
 }
 [data-theme="light"] .text-white\/60 {
   color: color-mix(in srgb, var(--white) 60%, transparent) !important;
@@ -193,14 +211,48 @@ select option {
 [data-theme="light"] .text-white\/50 {
   color: color-mix(in srgb, var(--white) 50%, transparent) !important;
 }
+[data-theme="light"] .text-white\/40 {
+  color: color-mix(in srgb, var(--white) 40%, transparent) !important;
+}
+[data-theme="light"] .text-white\/30 {
+  color: color-mix(in srgb, var(--white) 30%, transparent) !important;
+}
+[data-theme="light"] .text-white\/20 {
+  color: color-mix(in srgb, var(--white) 20%, transparent) !important;
+}
 [data-theme="light"] .text-white\/15 {
   color: color-mix(in srgb, var(--white) 15%, transparent) !important;
+}
+[data-theme="light"] .placeholder-white\/20::placeholder,
+[data-theme="light"] .placeholder\:text-white\/20::placeholder {
+  color: color-mix(in srgb, var(--white) 20%, transparent) !important;
+}
+[data-theme="light"] .hover\:text-white:hover {
+  color: var(--white) !important;
+}
+[data-theme="light"] .hover\:text-white\/70:hover {
+  color: color-mix(in srgb, var(--white) 70%, transparent) !important;
+}
+[data-theme="light"] .hover\:text-white\/60:hover {
+  color: color-mix(in srgb, var(--white) 60%, transparent) !important;
 }
 [data-theme="light"] .hover\:bg-white\/5:hover {
   background: rgba(0, 0, 0, 0.05) !important;
 }
+[data-theme="light"] .hover\:bg-white\/\[0\.02\]:hover {
+  background: rgba(0, 0, 0, 0.02) !important;
+}
 [data-theme="light"] .bg-white\/5 {
   background: rgba(0, 0, 0, 0.05) !important;
+}
+[data-theme="light"] .bg-white\/10 {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+[data-theme="light"] .hover\:bg-white\/10:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+[data-theme="light"] .hover\:bg-white\/20:hover {
+  background: rgba(0, 0, 0, 0.2) !important;
 }
 
 /* 애니메이션 */

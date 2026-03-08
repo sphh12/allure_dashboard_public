@@ -28,14 +28,15 @@ export default function EnvCard({ label, value }: Props) {
   return (
     <div
       className="rounded-lg p-3"
-      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)" }}
+      style={{ background: "var(--subtle-bg)", border: "1px solid var(--border)" }}
     >
-      <div className="text-[10px] font-medium uppercase tracking-wider mb-1 text-white/30">
+      <div className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: "var(--muted)" }}>
         {label}
       </div>
       <div
         ref={textRef}
-        className={`text-xs font-mono truncate text-white/80 ${isTruncated ? "cursor-help" : ""}`}
+        className={`text-xs font-mono truncate ${isTruncated ? "cursor-help" : ""}`}
+        style={{ color: "var(--text)" }}
         title={isTruncated ? value : undefined}
       >
         {value}

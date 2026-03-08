@@ -66,7 +66,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
   return (
     <div className="glass rounded-2xl p-5 mb-6">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-white/40">
+        <h2 className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
           Remark
         </h2>
 
@@ -79,7 +79,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
               title="Edit"
             >
               {/* 연필 아이콘 */}
-              <svg className="w-3.5 h-3.5 text-white/40 hover:text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5" style={{ color: "var(--muted)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
@@ -91,7 +91,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
               title="Delete"
             >
               {/* 휴지통 아이콘 */}
-              <svg className="w-3.5 h-3.5 text-white/40 hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 hover:text-red-400" style={{ color: "var(--muted)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
@@ -109,11 +109,12 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
             placeholder="Enter a remark..."
             rows={3}
             autoFocus
-            className="w-full rounded-lg px-3 py-2.5 text-sm text-white/90 placeholder-white/20 resize-y"
+            className="w-full rounded-lg px-3 py-2.5 text-sm placeholder-white/20 resize-y"
             style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              background: "var(--subtle-bg)",
+              border: "1px solid var(--subtle-border)",
               outline: "none",
+              color: "var(--text)",
             }}
           />
           <div className="flex items-center gap-2 mt-2">
@@ -123,7 +124,7 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
               className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors disabled:opacity-40 cursor-pointer"
               style={{
                 background: "rgba(34,197,94,0.15)",
-                color: "#6ee7b7",
+                color: "var(--passed)",
                 border: "1px solid rgba(34,197,94,0.2)",
               }}
             >
@@ -132,10 +133,11 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
             <button
               onClick={handleCancel}
               disabled={saving}
-              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors text-white/50 hover:text-white/70 cursor-pointer"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer"
               style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: "var(--subtle-bg)",
+                border: "1px solid var(--border-light)",
+                color: "var(--muted)",
               }}
             >
               Cancel
@@ -145,10 +147,11 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
       ) : remark ? (
         /* 보기 모드 - remark 표시 */
         <div
-          className="text-sm text-white/80 whitespace-pre-wrap leading-relaxed rounded-lg px-3 py-2.5"
+          className="text-sm whitespace-pre-wrap leading-relaxed rounded-lg px-3 py-2.5"
           style={{
-            background: "rgba(255,255,255,0.02)",
+            background: "var(--subtle-bg)",
             border: "1px solid var(--border)",
+            color: "var(--text)",
           }}
         >
           {remark}
@@ -157,10 +160,11 @@ export default function RemarkEditor({ timestamp, initialRemark }: RemarkEditorP
         /* remark 없음 - 추가 버튼 */
         <button
           onClick={startEdit}
-          className="flex items-center gap-2 px-3 py-2 text-xs rounded-lg transition-colors text-white/30 hover:text-white/60 hover:bg-white/3 cursor-pointer"
+          className="flex items-center gap-2 px-3 py-2 text-xs rounded-lg transition-colors hover:bg-white/3 cursor-pointer"
           style={{
-            background: "rgba(255,255,255,0.02)",
-            border: "1px dashed rgba(255,255,255,0.1)",
+            background: "var(--subtle-bg)",
+            border: "1px dashed var(--subtle-border)",
+            color: "var(--muted)",
           }}
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -110,11 +110,11 @@ function typeLabel(kind: string) {
 
 function typeBadgeStyle(kind: string) {
   switch (kind) {
-    case "image": return { bg: "rgba(167,139,250,0.12)", color: "#c4b5fd" };
-    case "video": return { bg: "rgba(59,130,246,0.12)", color: "#93c5fd" };
-    case "json": return { bg: "rgba(34,197,94,0.12)", color: "#86efac" };
-    case "xml": return { bg: "rgba(245,158,11,0.12)", color: "#fcd34d" };
-    default: return { bg: "rgba(255,255,255,0.08)", color: "#d1d5db" };
+    case "image": return { bg: "var(--accent-dim)", color: "var(--accent)" };
+    case "video": return { bg: "var(--accent2-dim)", color: "var(--accent2)" };
+    case "json": return { bg: "var(--passed-dim)", color: "var(--passed)" };
+    case "xml": return { bg: "var(--broken-dim)", color: "var(--broken)" };
+    default: return { bg: "var(--border-light)", color: "var(--muted)" };
   }
 }
 
@@ -148,8 +148,8 @@ function ScreenshotCard({ artifact }: { artifact: Artifact }) {
   return (
     <>
       <button
-        className="group relative overflow-hidden rounded-lg cursor-pointer border transition-all hover:border-white/20"
-        style={{ background: "rgba(255,255,255,0.02)", borderColor: "var(--border)" }}
+        className="group relative overflow-hidden rounded-lg cursor-pointer border transition-all"
+        style={{ background: "var(--subtle-bg)", borderColor: "var(--border)" }}
         onClick={() => setModalOpen(true)}
       >
         <img
@@ -160,9 +160,9 @@ function ScreenshotCard({ artifact }: { artifact: Artifact }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="absolute bottom-0 left-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <p className="text-[10px] text-white/80 truncate">{artifact.name}</p>
+          <p className="text-[10px] truncate" style={{ color: "rgba(255,255,255,0.8)" }}>{artifact.name}</p>
           {artifact.sizeBytes && (
-            <p className="text-[9px] text-white/50">{formatSize(artifact.sizeBytes)}</p>
+            <p className="text-[9px]" style={{ color: "rgba(255,255,255,0.5)" }}>{formatSize(artifact.sizeBytes)}</p>
           )}
         </div>
       </button>
@@ -178,7 +178,7 @@ function VideoCard({ artifact }: { artifact: Artifact }) {
   return (
     <div
       className="rounded-lg overflow-hidden"
-      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)" }}
+      style={{ background: "var(--subtle-bg)", border: "1px solid var(--border)" }}
     >
       <video
         src={artifact.url}
@@ -187,9 +187,9 @@ function VideoCard({ artifact }: { artifact: Artifact }) {
         className="w-full max-h-[400px] bg-black"
       />
       <div className="px-3 py-2 flex items-center justify-between">
-        <p className="text-xs text-white/70 truncate">{artifact.name}</p>
+        <p className="text-xs truncate" style={{ color: "var(--muted)" }}>{artifact.name}</p>
         {artifact.sizeBytes && (
-          <span className="text-[10px] text-white/40 ml-2 shrink-0">{formatSize(artifact.sizeBytes)}</span>
+          <span className="text-[10px] ml-2 shrink-0" style={{ color: "var(--muted)" }}>{formatSize(artifact.sizeBytes)}</span>
         )}
       </div>
     </div>
@@ -230,7 +230,7 @@ function TextViewer({ artifact, language }: { artifact: Artifact; language: stri
   return (
     <div
       className="rounded-lg overflow-hidden"
-      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)" }}
+      style={{ background: "var(--subtle-bg)", border: "1px solid var(--border)" }}
     >
       <button
         className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-white/[0.02] transition-colors"
@@ -243,13 +243,13 @@ function TextViewer({ artifact, language }: { artifact: Artifact; language: stri
           {typeIcon(language)}
           {typeLabel(language)}
         </span>
-        <span className="text-sm text-white/70 truncate text-left flex-1">{artifact.name}</span>
+        <span className="text-sm truncate text-left flex-1" style={{ color: "var(--muted)" }}>{artifact.name}</span>
         <div className="flex items-center gap-2 shrink-0">
           {artifact.sizeBytes && (
-            <span className="text-[10px] text-white/40">{formatSize(artifact.sizeBytes)}</span>
+            <span className="text-[10px]" style={{ color: "var(--muted)" }}>{formatSize(artifact.sizeBytes)}</span>
           )}
           {loading ? (
-            <span className="text-[10px] text-white/40">Loading...</span>
+            <span className="text-[10px]" style={{ color: "var(--muted)" }}>Loading...</span>
           ) : (
             <ExpandIcon expanded={expanded} />
           )}
@@ -258,8 +258,8 @@ function TextViewer({ artifact, language }: { artifact: Artifact; language: stri
       {expanded && content !== null && (
         <div className="border-t" style={{ borderColor: "var(--border)" }}>
           <pre
-            className="p-3 text-xs font-mono text-white/80 overflow-auto max-h-[400px] leading-relaxed"
-            style={{ background: "rgba(0,0,0,0.2)" }}
+            className="p-3 text-xs font-mono overflow-auto max-h-[400px] leading-relaxed"
+            style={{ background: "var(--panel-solid)", color: "var(--text)" }}
           >
             {content}
           </pre>
@@ -289,8 +289,8 @@ export default function ArtifactViewer({ artifacts }: { artifacts: Artifact[] })
       {images.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-white/40"><ImageIcon /></span>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-white/40">
+            <span style={{ color: "var(--muted)" }}><ImageIcon /></span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--muted)" }}>
               Screenshots ({images.length})
             </span>
           </div>
@@ -304,8 +304,8 @@ export default function ArtifactViewer({ artifacts }: { artifacts: Artifact[] })
       {videos.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-white/40"><VideoIcon /></span>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-white/40">
+            <span style={{ color: "var(--muted)" }}><VideoIcon /></span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--muted)" }}>
               Videos ({videos.length})
             </span>
           </div>
@@ -319,8 +319,8 @@ export default function ArtifactViewer({ artifacts }: { artifacts: Artifact[] })
       {texts.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-white/40"><FileTextIcon /></span>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-white/40">
+            <span style={{ color: "var(--muted)" }}><FileTextIcon /></span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--muted)" }}>
               Logs & Data ({texts.length})
             </span>
           </div>

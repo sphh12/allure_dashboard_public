@@ -27,7 +27,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
     return (
       <div className="glass rounded-2xl text-center py-20 animate-in">
         <div className="text-4xl mb-4 opacity-20">&#x1F50D;</div>
-        <div className="text-lg font-medium text-white">
+        <div className="text-lg font-medium" style={{ color: "var(--white)" }}>
           No data found
         </div>
         <div className="text-sm mt-1" style={{ color: "var(--muted)" }}>
@@ -70,7 +70,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                       }}
                     >
                       <td className="px-5 py-4">
-                        <div className="text-sm font-medium font-mono text-white">{date}</div>
+                        <div className="text-sm font-medium font-mono" style={{ color: "var(--white)" }}>{date}</div>
                         <div className="text-xs font-mono" style={{ color: "var(--muted)" }}>{time}</div>
                       </td>
                       <td className="px-4 py-4">
@@ -78,14 +78,14 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                           <div
                             className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0"
                             style={{
-                              background: run.platform === "ios" ? "rgba(167,139,250,0.12)" : "rgba(52,211,153,0.12)",
-                              color: run.platform === "ios" ? "#c4b5fd" : "#6ee7b7",
+                              background: run.platform === "ios" ? "var(--platform-ios-bg)" : "var(--platform-aos-bg)",
+                              color: run.platform === "ios" ? "var(--platform-ios)" : "var(--platform-aos)",
                             }}
                           >
                             {run.platform === "ios" ? "iOS" : "AOS"}
                           </div>
                           <div className="min-w-0">
-                            <div className="text-sm font-medium truncate max-w-[200px] text-white">
+                            <div className="text-sm font-medium truncate max-w-[200px]" style={{ color: "var(--white)" }}>
                               {run.deviceName ?? "-"}
                             </div>
                             <div className="text-xs" style={{ color: "var(--muted)" }}>
@@ -100,7 +100,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                           </svg>
                           <div className="min-w-0">
-                            <span className="text-sm font-mono font-medium text-white">{run.gitBranch ?? "-"}</span>
+                            <span className="text-sm font-mono font-medium" style={{ color: "var(--white)" }}>{run.gitBranch ?? "-"}</span>
                             {run.gitCommit && (
                               <span className="text-xs font-mono ml-2" style={{ color: "var(--muted)" }}>
                                 @{run.gitCommit.slice(0, 7)}
@@ -128,7 +128,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                               <div style={{ width: `${(run.skipped / run.total) * 100}%`, background: "var(--skipped)" }} />
                             )}
                           </div>
-                          <span className="text-xs tabular-nums whitespace-nowrap font-medium text-white">
+                          <span className="text-xs tabular-nums whitespace-nowrap font-medium" style={{ color: "var(--white)" }}>
                             {run.passed}/{run.total}
                           </span>
                         </div>
@@ -145,11 +145,11 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                       </td>
                       <td className="px-4 py-4">
                         {run.remark ? (
-                          <div className="text-xs text-white/60 truncate max-w-[140px]" title={run.remark}>
+                          <div className="text-xs truncate max-w-[140px]" style={{ color: "var(--muted)" }} title={run.remark}>
                             {run.remark}
                           </div>
                         ) : (
-                          <span className="text-xs text-white/15">-</span>
+                          <span className="text-xs" style={{ color: "var(--border-light)" }}>-</span>
                         )}
                       </td>
                     </tr>
@@ -178,7 +178,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                 <div className="flex items-center justify-between mb-3">
                   <StatusBadge status={run.status} />
                   <div className="text-right">
-                    <div className="text-xs font-mono text-white">{date}</div>
+                    <div className="text-xs font-mono" style={{ color: "var(--white)" }}>{date}</div>
                     <div className="text-[10px] font-mono" style={{ color: "var(--muted)" }}>{time}</div>
                   </div>
                 </div>
@@ -188,14 +188,14 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                   <div
                     className="w-7 h-7 rounded-lg flex items-center justify-center text-[9px] font-bold shrink-0"
                     style={{
-                      background: run.platform === "ios" ? "rgba(167,139,250,0.12)" : "rgba(52,211,153,0.12)",
-                      color: run.platform === "ios" ? "#c4b5fd" : "#6ee7b7",
+                      background: run.platform === "ios" ? "var(--platform-ios-bg)" : "var(--platform-aos-bg)",
+                      color: run.platform === "ios" ? "var(--platform-ios)" : "var(--platform-aos)",
                     }}
                   >
                     {run.platform === "ios" ? "iOS" : "AOS"}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium truncate text-white">
+                    <div className="text-sm font-medium truncate" style={{ color: "var(--white)" }}>
                       {run.deviceName ?? "-"}
                     </div>
                     <div className="text-xs font-mono truncate" style={{ color: "var(--muted)" }}>
@@ -211,8 +211,8 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                 {/* Remark */}
                 {run.remark && (
                   <div
-                    className="text-xs text-white/50 truncate mb-2 px-2 py-1 rounded"
-                    style={{ background: "var(--border)", border: "1px solid var(--border-light)" }}
+                    className="text-xs truncate mb-2 px-2 py-1 rounded"
+                    style={{ color: "var(--muted)", background: "var(--border)", border: "1px solid var(--border-light)" }}
                     title={run.remark}
                   >
                     {run.remark}
@@ -235,7 +235,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
                       <div style={{ width: `${(run.skipped / run.total) * 100}%`, background: "var(--skipped)" }} />
                     )}
                   </div>
-                  <span className="text-[11px] tabular-nums font-medium text-white whitespace-nowrap">
+                  <span className="text-[11px] tabular-nums font-medium whitespace-nowrap" style={{ color: "var(--white)" }}>
                     {run.passed}/{run.total}
                     <span className="ml-1" style={{ color: "var(--muted)" }}>({passRate}%)</span>
                   </span>
@@ -252,8 +252,8 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
 function Th({ children, align, style }: { children: React.ReactNode; align: string; style?: React.CSSProperties }) {
   return (
     <th
-      className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-white/50"
-      style={{ textAlign: align as never, ...style }}
+      className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider"
+      style={{ textAlign: align as never, color: "var(--muted)", ...style }}
     >
       {children}
     </th>
