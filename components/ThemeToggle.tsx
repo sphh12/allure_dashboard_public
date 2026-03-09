@@ -27,23 +27,20 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="p-2 rounded-lg transition-all hover:scale-105 cursor-pointer"
-      style={{
-        background: "var(--border)",
-        border: "1px solid var(--border-light)",
-      }}
+      className="p-2 rounded-lg transition-all hover:scale-110 cursor-pointer"
+      style={{ background: "transparent", border: "none" }}
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       title={theme === "dark" ? "Light Mode" : "Dark Mode"}
     >
       {theme === "dark" ? (
-        // 태양 아이콘 (라이트 모드로 전환)
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        // 태양 아이콘 (라이트 모드로 전환) — 노란색 filled
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" strokeWidth={2}>
           <circle cx="12" cy="12" r="5" />
           <path strokeLinecap="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
         </svg>
       ) : (
-        // 달 아이콘 (다크 모드로 전환)
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        // 달 아이콘 (다크 모드로 전환) — 남색 filled
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#6366f1" stroke="#6366f1" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
         </svg>
       )}
