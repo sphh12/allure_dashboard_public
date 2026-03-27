@@ -5,6 +5,7 @@ import StatusBadge from "@/components/StatusBadge";
 import ArtifactViewer from "@/components/ArtifactViewer";
 import EnvCard from "@/components/EnvCard";
 import RemarkEditor from "@/components/RemarkEditor";
+import FailedCaseList from "@/components/FailedCaseList";
 import { formatTimestamp } from "@/lib/utils";
 
 interface SuiteItem {
@@ -24,7 +25,7 @@ export default async function RunDetailPage({
   const { timestamp } = await params;
   const run = await prisma.run.findUnique({
     where: { timestamp },
-    include: { artifacts: true },
+    include: { artifacts: true, testCases: { include: { artifacts: true }, orderBy: { status: "asc" } } },
   });
 
   if (!run) notFound();
@@ -144,6 +145,13 @@ export default async function RunDetailPage({
           </div>
         </div>
       </div>
+
+      {/* 실패/broken 테스트 케이스 목록 */}
+      {run.testCases && (run.testCases as any[]).some((tc: any) => tc.status === "failed" || tc.status === "broken") && (
+        <div className="glass rounded-2xl p-5 mb-6">
+          <FailedCaseList testCases={run.testCases as any} />
+        </div>
+      )}
 
       {/* Git 정보 */}
       {env.gitBranch && (

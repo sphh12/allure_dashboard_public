@@ -31,6 +31,7 @@ model Run {
   packages        Json?
   environment     Json?
   remark          String?
+  testCases       TestCase[]
   artifacts       Artifact[]
   createdAt       DateTime   @default(now())
 
@@ -39,18 +40,44 @@ model Run {
   @@index([createdAt])
 }
 
+model TestCase {
+  id            String     @id @default(cuid())
+  runId         String
+  run           Run        @relation(fields: [runId], references: [id], onDelete: Cascade)
+  uid           String     @default("")
+  name          String
+  fullName      String     @default("")
+  status        String
+  statusMessage String?    @db.Text
+  statusTrace   String?    @db.Text
+  description   String?
+  suite         String?
+  severity      String?
+  durationMs    Int        @default(0)
+  steps         Json?
+  artifacts     Artifact[]
+  createdAt     DateTime   @default(now())
+
+  @@unique([runId, uid])
+  @@index([runId])
+  @@index([status])
+}
+
 model Artifact {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   runId       String
-  run         Run      @relation(fields: [runId], references: [id], onDelete: Cascade)
+  run         Run       @relation(fields: [runId], references: [id], onDelete: Cascade)
+  testCaseId  String?
+  testCase    TestCase? @relation(fields: [testCaseId], references: [id], onDelete: SetNull)
   type        String
   name        String
-  source      String   @default("")
-  url         String   @default("")
+  source      String    @default("")
+  url         String    @default("")
   contentType String?
   sizeBytes   Int?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
 
   @@unique([runId, source])
   @@index([runId])
+  @@index([testCaseId])
 }

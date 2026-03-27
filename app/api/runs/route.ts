@@ -71,54 +71,75 @@ export async function POST(req: NextRequest) {
           ? "pass"
           : "skip";
 
+  const runData = {
+    status,
+    platform: env.platform ?? null,
+    deviceName: env.deviceName ?? null,
+    platformVersion: env.platformVersion ?? null,
+    app: env.app ?? null,
+    gitBranch: env.gitBranch ?? null,
+    gitCommit: env.gitCommit ?? null,
+    gitMessage: env.gitMessage ?? null,
+    total: stats.total ?? 0,
+    passed: stats.passed ?? 0,
+    failed: stats.failed ?? 0,
+    broken: stats.broken ?? 0,
+    skipped: stats.skipped ?? 0,
+    durationMs: time.duration ?? 0,
+    durationText: body.durationText ?? null,
+    buildName: executor.buildName ?? null,
+    suites: body.suites ?? null,
+    behaviors: body.behaviors ?? null,
+    packages: body.packages ?? null,
+    environment: env,
+  };
+
   const run = await prisma.run.upsert({
     where: { timestamp: body.timestamp },
-    update: {
-      status,
-      platform: env.platform ?? null,
-      deviceName: env.deviceName ?? null,
-      platformVersion: env.platformVersion ?? null,
-      app: env.app ?? null,
-      gitBranch: env.gitBranch ?? null,
-      gitCommit: env.gitCommit ?? null,
-      gitMessage: env.gitMessage ?? null,
-      total: stats.total ?? 0,
-      passed: stats.passed ?? 0,
-      failed: stats.failed ?? 0,
-      broken: stats.broken ?? 0,
-      skipped: stats.skipped ?? 0,
-      durationMs: time.duration ?? 0,
-      durationText: body.durationText ?? null,
-      buildName: executor.buildName ?? null,
-      suites: body.suites ?? null,
-      behaviors: body.behaviors ?? null,
-      packages: body.packages ?? null,
-      environment: env,
-    },
-    create: {
-      timestamp: body.timestamp,
-      status,
-      platform: env.platform ?? null,
-      deviceName: env.deviceName ?? null,
-      platformVersion: env.platformVersion ?? null,
-      app: env.app ?? null,
-      gitBranch: env.gitBranch ?? null,
-      gitCommit: env.gitCommit ?? null,
-      gitMessage: env.gitMessage ?? null,
-      total: stats.total ?? 0,
-      passed: stats.passed ?? 0,
-      failed: stats.failed ?? 0,
-      broken: stats.broken ?? 0,
-      skipped: stats.skipped ?? 0,
-      durationMs: time.duration ?? 0,
-      durationText: body.durationText ?? null,
-      buildName: executor.buildName ?? null,
-      suites: body.suites ?? null,
-      behaviors: body.behaviors ?? null,
-      packages: body.packages ?? null,
-      environment: env,
-    },
+    update: runData,
+    create: { timestamp: body.timestamp, ...runData },
   });
+
+  // testCases 배열이 있으면 저장
+  const testCases: Array<{
+    uid?: string;
+    name: string;
+    fullName?: string;
+    status: string;
+    statusMessage?: string;
+    statusTrace?: string;
+    description?: string;
+    suite?: string;
+    severity?: string;
+    durationMs?: number;
+    steps?: unknown;
+  }> = body.testCases ?? [];
+
+  if (testCases.length > 0) {
+    // 기존 테스트 케이스 삭제 후 재생성 (upsert 대신 replace 전략)
+    await prisma.testCase.deleteMany({ where: { runId: run.id } });
+
+    await Promise.all(
+      testCases.map((tc) =>
+        prisma.testCase.create({
+          data: {
+            runId: run.id,
+            uid: tc.uid ?? "",
+            name: tc.name,
+            fullName: tc.fullName ?? "",
+            status: tc.status,
+            statusMessage: tc.statusMessage ?? null,
+            statusTrace: tc.statusTrace ?? null,
+            description: tc.description ?? null,
+            suite: tc.suite ?? null,
+            severity: tc.severity ?? null,
+            durationMs: tc.durationMs ?? 0,
+            steps: tc.steps ?? undefined,
+          },
+        })
+      )
+    );
+  }
 
   return NextResponse.json(run, { status: 201 });
 }

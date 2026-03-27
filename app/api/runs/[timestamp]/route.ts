@@ -9,7 +9,7 @@ export async function GET(
 
   const run = await prisma.run.findUnique({
     where: { timestamp },
-    include: { artifacts: true },
+    include: { artifacts: true, testCases: { include: { artifacts: true } } },
   });
 
   if (!run) {
