@@ -12,8 +12,14 @@ export async function GET(req: NextRequest) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {};
 
-  if (platform) where.platform = platform;
-  if (status) where.status = status;
+  if (platform) {
+    const platforms = platform.split(",").filter(Boolean);
+    where.platform = platforms.length === 1 ? platforms[0] : { in: platforms };
+  }
+  if (status) {
+    const statuses = status.split(",").filter(Boolean);
+    where.status = statuses.length === 1 ? statuses[0] : { in: statuses };
+  }
   if (from || to) {
     where.timestamp = {};
     if (from) where.timestamp.gte = from;

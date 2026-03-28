@@ -60,7 +60,10 @@ export default async function Home({ searchParams }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {};
 
-  if (sp.platform) where.platform = sp.platform;
+  if (sp.platform) {
+    const platforms = sp.platform.split(",").filter(Boolean);
+    where.platform = platforms.length === 1 ? platforms[0] : { in: platforms };
+  }
   if (sp.status) {
     const statuses = sp.status.split(",").filter(Boolean);
     if (statuses.length === 1) {

@@ -3,13 +3,110 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState, useEffect, useRef, useMemo } from "react";
 
-const platforms = ["", "android", "ios"];
+const platformOptions = [
+  { value: "android", label: "Android" },
+  { value: "ios", label: "iOS" },
+];
+
+const statusOptions = [
+  { value: "pass", label: "Pass" },
+  { value: "fail", label: "Fail" },
+  { value: "broken", label: "Broken" },
+  { value: "skip", label: "Skip" },
+];
 
 const controlStyle: React.CSSProperties = {
   background: "var(--border)",
   color: "var(--text)",
   border: "1px solid var(--border-light)",
 };
+
+function CheckboxDropdown({
+  label,
+  options,
+  selected,
+  onChange,
+}: {
+  label: string;
+  options: { value: string; label: string }[];
+  selected: string[];
+  onChange: (values: string[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [local, setLocal] = useState(selected);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // 외부 selected 변경 시 동기화 (Clear 버튼 등)
+  useEffect(() => {
+    setLocal(selected);
+  }, [selected]);
+
+  // 닫힐 때 변경사항이 있으면 onChange 호출
+  const closeAndApply = useCallback(() => {
+    setOpen(false);
+    if (local.sort().join(",") !== selected.sort().join(",")) {
+      onChange(local);
+    }
+  }, [local, selected, onChange]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) closeAndApply();
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [closeAndApply]);
+
+  const toggle = (value: string) => {
+    setLocal((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    );
+  };
+
+  const displayText = local.length > 0
+    ? options.filter((o) => local.includes(o.value)).map((o) => o.label).join(", ")
+    : label;
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+        style={controlStyle}
+        onClick={() => { if (open) closeAndApply(); else setOpen(true); }}
+      >
+        <span style={{ color: selected.length > 0 ? "var(--white)" : "var(--text)" }}>
+          {displayText}
+        </span>
+        <svg className="w-3 h-3 shrink-0" style={{ color: "var(--muted)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={open ? "M18 15l-6-6-6 6" : "M6 9l6 6 6-6"} />
+        </svg>
+      </button>
+      {open && (
+        <div
+          className="absolute top-full left-0 mt-1 rounded-lg py-1 z-50 min-w-[140px] shadow-lg"
+          style={{ background: "var(--bg)", border: "1px solid var(--border-light)", backdropFilter: "blur(20px)" }}
+        >
+          {options.map((opt) => (
+            <label
+              key={opt.value}
+              className="flex items-center gap-2.5 px-3 py-2 cursor-pointer hover:bg-white/5 transition-colors text-sm"
+              style={{ color: "var(--text)" }}
+            >
+              <input
+                type="checkbox"
+                checked={local.includes(opt.value)}
+                onChange={() => toggle(opt.value)}
+                className="accent-blue-500 cursor-pointer"
+              />
+              {opt.label}
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // 커스텀 날짜 입력: 숫자 연속 입력 → 자동 포맷 (20260202 → 2026-02-02)
 function DateInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
@@ -165,20 +262,21 @@ export default function Filters() {
           />
         </div>
 
-        {/* Platform */}
-        <select
-          className="px-3 py-2.5 rounded-lg text-sm outline-none transition-all cursor-pointer"
-          style={controlStyle}
-          value={searchParams.get("platform") ?? ""}
-          onChange={(e) => update("platform", e.target.value)}
-        >
-          <option value="">Platform</option>
-          {platforms.filter(Boolean).map((p) => (
-            <option key={p} value={p}>
-              {p === "android" ? "Android" : "iOS"}
-            </option>
-          ))}
-        </select>
+        {/* OS */}
+        <CheckboxDropdown
+          label="OS"
+          options={platformOptions}
+          selected={(searchParams.get("platform") ?? "").split(",").filter(Boolean)}
+          onChange={(values) => update("platform", values.join(","))}
+        />
+
+        {/* Status */}
+        <CheckboxDropdown
+          label="Status"
+          options={statusOptions}
+          selected={(searchParams.get("status") ?? "").split(",").filter(Boolean)}
+          onChange={(values) => update("status", values.join(","))}
+        />
 
         {/* Date from */}
         <DateInput
