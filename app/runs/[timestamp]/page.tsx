@@ -6,6 +6,7 @@ import ArtifactViewer from "@/components/ArtifactViewer";
 import EnvCard from "@/components/EnvCard";
 import RemarkEditor from "@/components/RemarkEditor";
 import FailedCaseList from "@/components/FailedCaseList";
+import AllCaseList from "@/components/AllCaseList";
 import { formatTimestamp } from "@/lib/utils";
 
 interface SuiteItem {
@@ -41,8 +42,9 @@ export default async function RunDetailPage({
   const behaviors = (run.behaviors as unknown as SuiteItem[]) ?? [];
   const passRate = run.total > 0 ? Math.round((run.passed / run.total) * 100) : 0;
 
-  const priorityEnv = ["platform", "deviceName", "platformVersion", "automationName", "app", "gitBranch", "gitCommit", "gitMessage"];
-  const otherEnv = Object.keys(env).filter((k) => !priorityEnv.includes(k));
+  const hiddenEnv = ["automationName", "gitBranch", "gitCommit", "gitMessage", "os", "python", "appiumServer", "allureAttach", "recordVideo"];
+  const priorityEnv = ["platform", "deviceName", "platformVersion", "app"];
+  const otherEnv = Object.keys(env).filter((k) => !priorityEnv.includes(k) && !hiddenEnv.includes(k));
 
   return (
     <main className="max-w-5xl mx-auto px-6 py-8 animate-in">
@@ -150,6 +152,13 @@ export default async function RunDetailPage({
       {run.testCases && (run.testCases as any[]).some((tc: any) => tc.status === "failed" || tc.status === "broken") && (
         <div className="glass rounded-2xl p-5 mb-6">
           <FailedCaseList testCases={run.testCases as any} />
+        </div>
+      )}
+
+      {/* 전체 테스트 케이스 목록 */}
+      {run.testCases && (run.testCases as any[]).length > 0 && (
+        <div className="glass rounded-2xl p-5 mb-6">
+          <AllCaseList testCases={run.testCases as any} />
         </div>
       )}
 
