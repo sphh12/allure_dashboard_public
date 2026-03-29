@@ -161,11 +161,54 @@ function TestCaseRow({ tc }: { tc: TestCaseItem }) {
   const [expanded, setExpanded] = useState(false);
   const [traceExpanded, setTraceExpanded] = useState(false);
   const [modalImage, setModalImage] = useState<string | null>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
 
   const hasSteps = tc.steps && Array.isArray(tc.steps) && tc.steps.length > 0;
   const hasArtifacts = tc.artifacts && tc.artifacts.length > 0;
   const hasError = tc.statusMessage || tc.statusTrace;
   const hasDetails = hasSteps || hasArtifacts || hasError;
+  const isFailed = tc.status === "failed" || tc.status === "broken";
+
+  const handleAiAnalyze = async () => {
+    if (aiLoading || aiAnalysis) return;
+    setAiLoading(true);
+    try {
+      const screenshotUrl = tc.artifacts?.find(
+        (a) => (a.contentType || a.type || "").toLowerCase().startsWith("image/")
+      )?.url || "";
+
+      // page_source XML에서 snippet 추출
+      const xmlArtifact = tc.artifacts?.find(
+        (a) => a.name?.toLowerCase().includes("page_source") || (a.contentType || "").includes("xml")
+      );
+      let pageSourceSnippet = "";
+      if (xmlArtifact?.url) {
+        try {
+          const res = await fetch(xmlArtifact.url);
+          if (res.ok) pageSourceSnippet = (await res.text()).slice(0, 1000);
+        } catch { /* ignore */ }
+      }
+
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          testName: tc.name,
+          errorMessage: tc.statusMessage || "",
+          statusTrace: tc.statusTrace || "",
+          screenshotUrl,
+          pageSourceSnippet,
+        }),
+      });
+      const data = await res.json();
+      setAiAnalysis(data.analysis || data.error || "분석 실패");
+    } catch (e) {
+      setAiAnalysis(`분석 오류: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const images = tc.artifacts?.filter((a) => (a.contentType || a.type || "").toLowerCase().startsWith("image/")) ?? [];
   const videos = tc.artifacts?.filter((a) => (a.contentType || a.type || "").toLowerCase().startsWith("video/")) ?? [];
@@ -246,6 +289,69 @@ function TestCaseRow({ tc }: { tc: TestCaseItem }) {
                 >
                   {tc.statusMessage.split("\n")[0]}
                 </div>
+              </div>
+            )}
+
+            {/* AI 분석 (failed/broken만) */}
+            {isFailed && (
+              <div>
+                {/* DB에 저장된 분석 결과 또는 실시간 분석 결과 표시 */}
+                {(tc.description || aiAnalysis) ? (
+                  <div>
+                    <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: "#a78bfa" }}>
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                      AI Analysis
+                    </div>
+                    <div
+                      className="rounded-lg px-3 py-2.5 text-xs leading-relaxed whitespace-pre-wrap"
+                      style={{
+                        background: "linear-gradient(135deg, rgba(139,92,246,0.06), rgba(99,102,241,0.06))",
+                        border: "1px solid rgba(139,92,246,0.15)",
+                        color: "var(--text)",
+                      }}
+                    >
+                      {tc.description || aiAnalysis}
+                    </div>
+                  </div>
+                ) : (
+                  /* DB에 분석 결과 없으면 실시간 분석 버튼 표시 */
+                  <>
+                    {!aiLoading && (
+                      <button
+                        onClick={handleAiAnalyze}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all hover:opacity-80"
+                        style={{
+                          background: "linear-gradient(135deg, rgba(139,92,246,0.15), rgba(99,102,241,0.15))",
+                          border: "1px solid rgba(139,92,246,0.3)",
+                          color: "#a78bfa",
+                        }}
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        AI 이슈 분석
+                      </button>
+                    )}
+                    {aiLoading && (
+                      <div
+                        className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs"
+                        style={{
+                          background: "rgba(139,92,246,0.08)",
+                          border: "1px solid rgba(139,92,246,0.15)",
+                          color: "#a78bfa",
+                        }}
+                      >
+                        <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Claude가 분석 중...
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             )}
 

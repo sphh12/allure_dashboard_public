@@ -297,7 +297,7 @@ export default function Filters() {
           <button
             onClick={clearAll}
             className="px-3 py-2.5 rounded-lg text-xs font-medium transition-all hover:opacity-80 cursor-pointer"
-            style={{ background: "var(--border-light)", border: "1px solid var(--border-light)", color: "var(--white)" }}
+            style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "var(--failed)" }}
           >
             Clear
           </button>
