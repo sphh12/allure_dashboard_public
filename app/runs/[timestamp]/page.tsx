@@ -42,8 +42,8 @@ export default async function RunDetailPage({
   const behaviors = (run.behaviors as unknown as SuiteItem[]) ?? [];
   const passRate = run.total > 0 ? Math.round((run.passed / run.total) * 100) : 0;
 
-  const hiddenEnv = ["automationName", "gitBranch", "gitCommit", "gitMessage", "os", "python", "appiumServer", "allureAttach", "recordVideo"];
-  const priorityEnv = ["platform", "deviceName", "platformVersion", "app"];
+  const hiddenEnv = ["automationName", "gitBranch", "gitCommit", "gitMessage", "os", "python", "appiumServer", "allureAttach", "recordVideo", "app", "platformVersion", "appVersion", "deviceName"];
+  const priorityEnv = ["platform", "appName", "appEnv", "testScript"];
   const otherEnv = Object.keys(env).filter((k) => !priorityEnv.includes(k) && !hiddenEnv.includes(k));
 
   return (
@@ -71,15 +71,6 @@ export default async function RunDetailPage({
               <StatusBadge status={run.status} size="lg" />
             </div>
             <div className="flex items-center gap-4 text-sm" style={{ color: "var(--muted)" }}>
-              {run.durationText && (
-                <span className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                    <path strokeLinecap="round" d="M12 6v6l4 2" strokeWidth="2" />
-                  </svg>
-                  <span style={{ color: "var(--text)" }}>{run.durationText}</span>
-                </span>
-              )}
               {env.platform && (
                 <span className="flex items-center gap-1.5">
                   <span
@@ -92,6 +83,15 @@ export default async function RunDetailPage({
                     {env.platform === "ios" ? "iOS" : "AOS"}
                   </span>
                   <span style={{ color: "var(--text)" }}>{env.deviceName}</span>
+                </span>
+              )}
+              {run.durationText && (
+                <span className="flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                    <path strokeLinecap="round" d="M12 6v6l4 2" strokeWidth="2" />
+                  </svg>
+                  <span style={{ color: "var(--text)" }}>{run.durationText}</span>
                 </span>
               )}
             </div>
@@ -148,12 +148,28 @@ export default async function RunDetailPage({
         </div>
       </div>
 
-      {/* 실패/broken 테스트 케이스 목록 */}
-      {run.testCases && (run.testCases as any[]).some((tc: any) => tc.status === "failed" || tc.status === "broken") && (
-        <div className="glass rounded-2xl p-5 mb-6">
-          <FailedCaseList testCases={run.testCases as any} />
+      {/* Environment */}
+      <div className="glass rounded-2xl p-5 mb-6">
+        <SectionTitle>Environment</SectionTitle>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
+          {[...priorityEnv.filter((k) => env[k]), ...otherEnv.filter((k) => env[k])].map((key) => {
+            let displayValue = String(env[key]);
+            // OS: platform + platformVersion 합치기 (예: "android Android 16" → "Android 16")
+            if (key === "platform") {
+              const ver = env.platformVersion || "";
+              displayValue = ver || displayValue;
+            }
+            // APP: appName + appVersion 합치기 (예: "GME Remit(livetest) 7.15.0")
+            if (key === "appName") {
+              const ver = env.appVersion || "";
+              displayValue = ver ? `${displayValue} ${ver}` : displayValue;
+            }
+            const labelMap: Record<string, string> = { platform: "OS", appName: "APP", appEnv: "ENV", testScript: "TEST SCRIPT" };
+            const displayKey = labelMap[key] ?? key.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
+            return <EnvCard key={key} label={displayKey} value={displayValue} />;
+          })}
         </div>
-      )}
+      </div>
 
       {/* 전체 테스트 케이스 목록 */}
       {run.testCases && (run.testCases as any[]).length > 0 && (
@@ -161,21 +177,6 @@ export default async function RunDetailPage({
           <AllCaseList testCases={run.testCases as any} />
         </div>
       )}
-
-      {/* Git 정보 */}
-      {env.gitBranch && (
-        <div className="glass rounded-2xl p-5 mb-6">
-          <SectionTitle>Git Info</SectionTitle>
-          <div className="flex flex-wrap gap-3 mt-3">
-            <InfoChip label="Branch" value={env.gitBranch} />
-            {env.gitCommit && <InfoChip label="Commit" value={env.gitCommit} mono />}
-            {env.gitMessage && <InfoChip label="Message" value={env.gitMessage} wide />}
-          </div>
-        </div>
-      )}
-
-      {/* Remark */}
-      <RemarkEditor timestamp={run.timestamp} initialRemark={run.remark} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Suites */}
@@ -195,27 +196,30 @@ export default async function RunDetailPage({
         )}
       </div>
 
-      {/* Environment */}
-      <div className="glass rounded-2xl p-5 mb-6">
-        <SectionTitle>Environment</SectionTitle>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
-          {[...priorityEnv.filter((k) => env[k]), ...otherEnv.filter((k) => env[k])].map((key) => {
-            const displayValue = key === "app" ? String(env[key]).split(/[/\\]/).pop() || env[key] : String(env[key]);
-            const displayKey = key.replace(/([a-z])([A-Z])/g, "$1_$2").toUpperCase();
-            return <EnvCard key={key} label={displayKey} value={displayValue} />;
-          })}
-        </div>
-      </div>
-
       {/* Artifacts */}
       {run.artifacts.length > 0 && (
-        <div className="glass rounded-2xl p-5">
+        <div className="glass rounded-2xl p-5 mb-6">
           <SectionTitle>Artifacts</SectionTitle>
           <div className="mt-3">
             <ArtifactViewer artifacts={run.artifacts} />
           </div>
         </div>
       )}
+
+      {/* Git 정보 */}
+      {env.gitBranch && (
+        <div className="glass rounded-2xl p-5 mb-6">
+          <SectionTitle>Git Info</SectionTitle>
+          <div className="flex flex-wrap gap-3 mt-3">
+            <InfoChip label="Branch" value={env.gitBranch} />
+            {env.gitCommit && <InfoChip label="Commit" value={env.gitCommit} mono />}
+            {env.gitMessage && <InfoChip label="Message" value={env.gitMessage} wide />}
+          </div>
+        </div>
+      )}
+
+      {/* Remark */}
+      <RemarkEditor timestamp={run.timestamp} initialRemark={run.remark} />
     </main>
   );
 }

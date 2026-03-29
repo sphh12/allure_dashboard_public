@@ -2,9 +2,12 @@
 
 const styles: Record<string, { bg: string; text: string; dot: string }> = {
   pass: { bg: "var(--passed-dim)", text: "var(--passed)", dot: "var(--passed)" },
+  passed: { bg: "var(--passed-dim)", text: "var(--passed)", dot: "var(--passed)" },
   fail: { bg: "var(--failed-dim)", text: "var(--failed)", dot: "var(--failed)" },
+  failed: { bg: "var(--failed-dim)", text: "var(--failed)", dot: "var(--failed)" },
   broken: { bg: "var(--broken-dim)", text: "var(--broken)", dot: "var(--broken)" },
   skip: { bg: "var(--skipped-dim)", text: "var(--skipped)", dot: "var(--skipped)" },
+  skipped: { bg: "var(--skipped-dim)", text: "var(--skipped)", dot: "var(--skipped)" },
 };
 
 export default function StatusBadge({ status, size = "sm" }: { status: string; size?: "sm" | "lg" }) {
