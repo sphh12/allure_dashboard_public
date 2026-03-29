@@ -135,7 +135,7 @@ export default async function Home({ searchParams }: Props) {
       {/* 통계 */}
       <div className="glass rounded-2xl p-5 sm:p-6 mb-5">
         <Suspense>
-          <StatsBar stats={aggregated} />
+          <StatsBar stats={aggregated} latestRun={allRuns[0] ?? null} />
         </Suspense>
       </div>
 

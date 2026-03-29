@@ -36,6 +36,15 @@ interface Stats {
   skipped: number;
 }
 
+// No Data 표시
+function NoData() {
+  return (
+    <div className="flex items-center justify-center h-full">
+      <span className="text-sm" style={{ color: "var(--muted)" }}>No Data</span>
+    </div>
+  );
+}
+
 // 상태별 색상 (globals.css 변수와 일치)
 const STATUS_COLORS: Record<string, string> = {
   Passed: "#22c55e",
@@ -208,51 +217,52 @@ export default function OverviewCharts({ allRuns, allStats, runs }: { allRuns: R
       .sort((a, b) => b.value - a.value);
   }, [allRuns]);
 
-  if (allRuns.length === 0) return null;
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
       {/* Status 분포 도넛 차트 */}
       <div className="glass rounded-2xl p-5">
         <h3 className="text-sm font-semibold mb-4" style={{ color: "var(--white)" }}>Status</h3>
         <div className="h-[220px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={statusData}
-                cx="50%"
-                cy="50%"
-                innerRadius={55}
-                outerRadius={80}
-                paddingAngle={3}
-                dataKey="value"
-                label={renderOuterLabel}
-                labelLine={false}
-                strokeWidth={0}
-              >
-                {statusData.map((entry) => {
-                  const paramValue = STATUS_TO_PARAM[entry.name];
-                  const isActive = activeStatuses.length === 0 || activeStatuses.includes(paramValue);
-                  return (
-                    <Cell
-                      key={entry.name}
-                      fill={STATUS_COLORS[entry.name] ?? "#6b7280"}
-                      fillOpacity={isActive ? 1 : 0.15}
-                      cursor="pointer"
-                      onClick={() => handleStatusClick(entry.name)}
-                    />
-                  );
-                })}
-              </Pie>
-              {/* 중앙 텍스트 */}
-              <text x="50%" y="46%" textAnchor="middle" fontSize={28} fontWeight={700} style={{ fill: "var(--white)" }}>
-                {allStats.total}
-              </text>
-              <text x="50%" y="57%" textAnchor="middle" fontSize={11} style={{ fill: "var(--muted)" }}>
-                Total
-              </text>
-            </PieChart>
-          </ResponsiveContainer>
+          {statusData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={statusData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={55}
+                  outerRadius={80}
+                  paddingAngle={3}
+                  dataKey="value"
+                  label={renderOuterLabel}
+                  labelLine={false}
+                  strokeWidth={0}
+                >
+                  {statusData.map((entry) => {
+                    const paramValue = STATUS_TO_PARAM[entry.name];
+                    const isActive = activeStatuses.length === 0 || activeStatuses.includes(paramValue);
+                    return (
+                      <Cell
+                        key={entry.name}
+                        fill={STATUS_COLORS[entry.name] ?? "#6b7280"}
+                        fillOpacity={isActive ? 1 : 0.15}
+                        cursor="pointer"
+                        onClick={() => handleStatusClick(entry.name)}
+                      />
+                    );
+                  })}
+                </Pie>
+                <text x="50%" y="46%" textAnchor="middle" fontSize={28} fontWeight={700} style={{ fill: "var(--white)" }}>
+                  {allStats.total}
+                </text>
+                <text x="50%" y="57%" textAnchor="middle" fontSize={11} style={{ fill: "var(--muted)" }}>
+                  Total
+                </text>
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <NoData />
+          )}
         </div>
         {/* 범례 */}
         <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
@@ -281,6 +291,7 @@ export default function OverviewCharts({ allRuns, allStats, runs }: { allRuns: R
       <div className="glass rounded-2xl p-5 lg:col-span-2">
         <h3 className="text-sm font-semibold mb-4" style={{ color: "var(--white)" }}>Test Results Trend</h3>
         <div className="h-[220px]">
+          {trendData.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={trendData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
               <defs>
@@ -333,6 +344,9 @@ export default function OverviewCharts({ allRuns, allStats, runs }: { allRuns: R
               />
             </AreaChart>
           </ResponsiveContainer>
+          ) : (
+            <NoData />
+          )}
         </div>
         {/* 범례 */}
         <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
@@ -350,10 +364,10 @@ export default function OverviewCharts({ allRuns, allStats, runs }: { allRuns: R
       </div>
 
       {/* Platform 분포 차트 */}
-      {platformData.length > 0 && (
         <div className="glass rounded-2xl p-5 lg:col-span-1">
           <h3 className="text-sm font-semibold mb-4" style={{ color: "var(--white)" }}>Platform</h3>
           <div className="h-[220px]">
+            {platformData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -390,6 +404,9 @@ export default function OverviewCharts({ allRuns, allStats, runs }: { allRuns: R
                 </text>
               </PieChart>
             </ResponsiveContainer>
+            ) : (
+              <NoData />
+            )}
           </div>
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
             {platformData.map((entry) => {
@@ -413,13 +430,11 @@ export default function OverviewCharts({ allRuns, allStats, runs }: { allRuns: R
           </div>
         </div>
 
-      )}
-
       {/* Pass Rate 트렌드 바 차트 */}
-      {trendData.length > 1 && (
         <div className="glass rounded-2xl p-5 lg:col-span-2">
           <h3 className="text-sm font-semibold mb-4" style={{ color: "var(--white)" }}>Pass Rate by Date</h3>
           <div className="h-[220px]">
+            {trendData.length > 1 ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={trendData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
@@ -440,6 +455,9 @@ export default function OverviewCharts({ allRuns, allStats, runs }: { allRuns: R
                 <Bar dataKey="broken" name="Broken" fill="var(--broken)" radius={[3, 3, 0, 0]} stackId="stack" />
               </BarChart>
             </ResponsiveContainer>
+            ) : (
+              <NoData />
+            )}
           </div>
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
             {[
@@ -454,7 +472,6 @@ export default function OverviewCharts({ allRuns, allStats, runs }: { allRuns: R
             ))}
           </div>
         </div>
-      )}
     </div>
   );
 }

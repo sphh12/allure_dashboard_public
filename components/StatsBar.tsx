@@ -11,10 +11,20 @@ interface Stats {
   skipped: number;
 }
 
-export default function StatsBar({ stats }: { stats: Stats }) {
+interface LatestRun {
+  total: number;
+  passed: number;
+  failed: number;
+  broken: number;
+  skipped: number;
+  timestamp: string;
+}
+
+export default function StatsBar({ stats, latestRun }: { stats: Stats; latestRun: LatestRun | null }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const passRate = stats.total > 0 ? Math.round((stats.passed / stats.total) * 100) : 0;
+  const latestPassRate = latestRun && latestRun.total > 0 ? Math.round((latestRun.passed / latestRun.total) * 100) : 0;
 
   // Optimistic UI: 로컬 상태로 즉시 반영, 서버 응답 대기 안 함
   const [optimisticStatuses, setOptimisticStatuses] = useState<Set<string> | null>(null);
@@ -65,29 +75,60 @@ export default function StatsBar({ stats }: { stats: Stats }) {
 
   return (
     <div className="space-y-4">
-      {/* 패스율 바 */}
-      <div className="flex items-center gap-4">
-        <span className="text-[11px] font-semibold uppercase tracking-widest shrink-0" style={{ color: "var(--muted)" }}>
-          Pass Rate
-        </span>
-        <div className="flex-1">
-          <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
-            <div
-              className="h-full rounded-full transition-all duration-700"
-              style={{
-                width: `${passRate}%`,
-                background: passRate === 100
-                  ? "var(--passed)"
-                  : passRate >= 70
-                    ? "linear-gradient(90deg, var(--passed), var(--broken))"
-                    : "linear-gradient(90deg, var(--failed), var(--broken))",
-              }}
-            />
+      {/* 패스율 바 2줄 */}
+      <div className="space-y-2.5">
+        {/* 전체 이력 Pass Rate */}
+        <div className="flex items-center gap-4">
+          <span className="text-[11px] font-semibold uppercase tracking-widest shrink-0 w-20" style={{ color: "var(--muted)" }}>
+            Overall
+          </span>
+          <div className="flex-1">
+            <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+              <div
+                className="h-full rounded-full transition-all duration-700"
+                style={{
+                  width: `${passRate}%`,
+                  background: passRate === 100
+                    ? "var(--passed)"
+                    : passRate >= 70
+                      ? "linear-gradient(90deg, var(--passed), var(--broken))"
+                      : "linear-gradient(90deg, var(--failed), var(--broken))",
+                }}
+              />
+            </div>
           </div>
+          <span className="text-sm font-bold tabular-nums shrink-0 w-12 text-right" style={{ color: "var(--white)" }}>
+            {passRate}%
+          </span>
         </div>
-        <span className="text-sm font-bold tabular-nums shrink-0" style={{ color: "var(--white)" }}>
-          {passRate}%
-        </span>
+
+        {/* 최근 실행 Pass Rate */}
+        <div
+          className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => latestRun && router.push(`/runs/${latestRun.timestamp}`)}
+        >
+          <span className="text-[11px] font-semibold uppercase tracking-widest shrink-0 w-20" style={{ color: "var(--muted)" }}>
+            Latest
+          </span>
+          <div className="flex-1">
+            <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+              <div
+                className="h-full rounded-full transition-all duration-700"
+                style={{
+                  width: `${latestPassRate}%`,
+                  background: latestPassRate === 100
+                    ? "var(--passed)"
+                    : latestPassRate >= 70
+                      ? "linear-gradient(90deg, var(--passed), var(--broken))"
+                      : "linear-gradient(90deg, var(--failed), var(--broken))",
+                }}
+              />
+            </div>
+          </div>
+          <span className="text-sm font-bold tabular-nums shrink-0 w-12 text-right" style={{ color: "var(--white)" }}>
+            {latestPassRate}%
+          </span>
+        </div>
       </div>
 
       {/* 5개 카드 균등 그리드 */}
