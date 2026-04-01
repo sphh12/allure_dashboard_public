@@ -137,7 +137,7 @@ export default async function RunDetailPage({
             ].map((item) => (
               <div
                 key={item.label}
-                className="rounded-xl py-3 text-center"
+                className="rounded-xl py-3 flex flex-col items-center justify-center"
                 style={{ background: item.bg, border: `1px solid ${item.border}` }}
               >
                 <div className="text-xl font-bold tabular-nums" style={{ color: item.color }}>{item.value}</div>
