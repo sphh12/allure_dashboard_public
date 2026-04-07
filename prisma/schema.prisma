@@ -81,3 +81,19 @@ model Artifact {
   @@index([runId])
   @@index([testCaseId])
 }
+
+model TriggerRequest {
+  id          String   @id @default(cuid())
+  status      String   @default("pending") // pending → running → complete → failed
+  platform    String   @default("android") // android / ios
+  testTarget  String?                      // 테스트 타겟 (예: "local_transfer", "all")
+  marker      String?                      // pytest 마커 (예: "smoke")
+  requestedBy String?                      // 요청자 이름
+  result      Json?                        // 실행 결과 요약
+  runId       String?                      // 연결된 Run ID (대시보드 링크)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
