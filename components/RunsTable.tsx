@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import StatusBadge from "./StatusBadge";
 import { formatTimestamp } from "@/lib/utils";
@@ -22,7 +23,78 @@ interface RunRow {
   remark: string | null;
 }
 
+type SortKey = "timestamp" | "device" | "branch" | "result" | "passRate" | "duration";
+type SortDir = "asc" | "desc";
+
+// duration 텍스트 → 초 변환 (정렬용)
+function parseDuration(text: string | null): number {
+  if (!text) return 0;
+  let total = 0;
+  const h = text.match(/(\d+)h/);
+  const m = text.match(/(\d+)m/);
+  const s = text.match(/(\d+)s/);
+  if (h) total += parseInt(h[1]) * 3600;
+  if (m) total += parseInt(m[1]) * 60;
+  if (s) total += parseInt(s[1]);
+  return total;
+}
+
+// status → 정렬 순서
+function statusOrder(status: string): number {
+  switch (status) {
+    case "fail": return 0;
+    case "broken": return 1;
+    case "skip": return 2;
+    case "pass": return 3;
+    default: return 4;
+  }
+}
+
+function sortRuns(runs: RunRow[], key: SortKey, dir: SortDir): RunRow[] {
+  return [...runs].sort((a, b) => {
+    let cmp = 0;
+    switch (key) {
+      case "timestamp":
+        cmp = a.timestamp.localeCompare(b.timestamp);
+        break;
+      case "device":
+        cmp = (a.deviceName ?? "").localeCompare(b.deviceName ?? "");
+        break;
+      case "branch":
+        cmp = (a.gitBranch ?? "").localeCompare(b.gitBranch ?? "");
+        break;
+      case "result":
+        cmp = statusOrder(a.status) - statusOrder(b.status);
+        break;
+      case "passRate": {
+        const rateA = a.total > 0 ? a.passed / a.total : 0;
+        const rateB = b.total > 0 ? b.passed / b.total : 0;
+        cmp = rateA - rateB;
+        break;
+      }
+      case "duration":
+        cmp = parseDuration(a.durationText) - parseDuration(b.durationText);
+        break;
+    }
+    return dir === "asc" ? cmp : -cmp;
+  });
+}
+
 export default function RunsTable({ runs }: { runs: RunRow[] }) {
+  const [sortKey, setSortKey] = useState<SortKey>("timestamp");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  const sorted = useMemo(() => sortRuns(runs, sortKey, sortDir), [runs, sortKey, sortDir]);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("desc");
+    }
+  };
+
   if (runs.length === 0) {
     return (
       <div className="glass rounded-2xl text-center py-20 animate-in">
@@ -45,17 +117,17 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
           <table className="w-full">
             <thead>
               <tr style={{ background: "var(--border)", borderBottom: "1px solid var(--border-light)" }}>
-                <Th align="left" style={{ width: 150 }}>Timestamp</Th>
-                <Th align="left">Device</Th>
-                <Th align="left">Branch</Th>
-                <Th align="center" style={{ width: 90 }}>Result</Th>
-                <Th align="center" style={{ width: 180 }}>Test Results</Th>
-                <Th align="right" style={{ width: 90 }}>Duration</Th>
+                <SortTh active={sortKey === "timestamp"} dir={sortDir} onClick={() => handleSort("timestamp")} align="left" style={{ width: 150 }}>Timestamp</SortTh>
+                <SortTh active={sortKey === "device"} dir={sortDir} onClick={() => handleSort("device")} align="left">Device</SortTh>
+                <SortTh active={sortKey === "branch"} dir={sortDir} onClick={() => handleSort("branch")} align="left">Branch</SortTh>
+                <SortTh active={sortKey === "result"} dir={sortDir} onClick={() => handleSort("result")} align="center" style={{ width: 90 }}>Result</SortTh>
+                <SortTh active={sortKey === "passRate"} dir={sortDir} onClick={() => handleSort("passRate")} align="center" style={{ width: 180 }}>Test Results</SortTh>
+                <SortTh active={sortKey === "duration"} dir={sortDir} onClick={() => handleSort("duration")} align="right" style={{ width: 90 }}>Duration</SortTh>
                 <Th align="left" style={{ width: 150 }}>Remark</Th>
               </tr>
             </thead>
             <tbody>
-              {runs.map((run, i) => {
+              {sorted.map((run, i) => {
                 const passRate = run.total > 0 ? Math.round((run.passed / run.total) * 100) : 0;
                 const tsFormatted = formatTimestamp(run.timestamp);
                 const [date, time] = tsFormatted.split(" ");
@@ -163,7 +235,7 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
 
       {/* 모바일: 카드 레이아웃 */}
       <div className="space-y-3 md:hidden animate-in">
-        {runs.map((run, i) => {
+        {sorted.map((run, i) => {
           const passRate = run.total > 0 ? Math.round((run.passed / run.total) * 100) : 0;
           const tsFormatted = formatTimestamp(run.timestamp);
           const [date, time] = tsFormatted.split(" ");
@@ -249,6 +321,32 @@ export default function RunsTable({ runs }: { runs: RunRow[] }) {
   );
 }
 
+// 정렬 가능한 헤더
+function SortTh({ children, active, dir, onClick, align, style }: {
+  children: React.ReactNode;
+  active: boolean;
+  dir: SortDir;
+  onClick: () => void;
+  align: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <th
+      className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider cursor-pointer select-none transition-colors hover:text-white/80"
+      style={{ textAlign: align as never, color: active ? "var(--white)" : "var(--muted)", ...style }}
+      onClick={onClick}
+    >
+      <span className="inline-flex items-center gap-1">
+        {children}
+        {active && (
+          <span className="text-[9px]">{dir === "desc" ? "▼" : "▲"}</span>
+        )}
+      </span>
+    </th>
+  );
+}
+
+// 정렬 불가 헤더 (Remark)
 function Th({ children, align, style }: { children: React.ReactNode; align: string; style?: React.CSSProperties }) {
   return (
     <th
