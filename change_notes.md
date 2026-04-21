@@ -1,5 +1,12 @@
 # Change Notes
 
+## 2026-04-21
+### 테스트 케이스 상세 기능 DB 반영
+- Prisma 스키마에 `TestCase` 모델 + `Artifact.testCaseId` FK 추가 후 `prisma db push`로 Neon DB 반영
+- 스키마 드리프트 발견 → `remark` 컬럼 스키마 복원으로 데이터 손실 방지
+- 기존 37개 리포트를 업데이트된 `upload_to_dashboard.py`로 재업로드 (testCases 데이터 포함)
+- `@anthropic-ai/sdk` 로컬 의존성 설치 (package-lock 업데이트)
+
 ## 2026-03-29
 - 필터 UI 개선: Platform → OS 이름 변경, select → 체크박스 드롭다운 전환
 - Status 필터 추가 (Pass/Fail/Broken/Skip)
