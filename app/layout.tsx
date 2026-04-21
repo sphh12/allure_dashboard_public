@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import DemoBadge from "@/components/DemoBadge";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
 export const metadata: Metadata = {
-  title: "Allure Dashboard",
+  title: isDemoMode ? "Allure Dashboard — Demo" : "Allure Dashboard",
   description: "테스트 실행 결과 대시보드",
+  robots: isDemoMode ? { index: false, follow: false } : undefined,
 };
 
 export default function RootLayout({
@@ -35,7 +39,10 @@ export default function RootLayout({
           })();
         `}} />
       </head>
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className={`${inter.className} antialiased`}>
+        <DemoBadge />
+        {children}
+      </body>
     </html>
   );
 }

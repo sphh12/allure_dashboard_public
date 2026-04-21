@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { DEMO_MODE, isPublicMode, maskRuns } from "@/lib/masking";
+
+const NO_STORE_HEADERS = DEMO_MODE ? { "Cache-Control": "no-store" } : undefined;
 
 export async function GET(req: NextRequest) {
   const sp = req.nextUrl.searchParams;
@@ -57,10 +60,13 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  return NextResponse.json(runs);
+  return NextResponse.json(maskRuns(runs), { headers: NO_STORE_HEADERS });
 }
 
 export async function POST(req: NextRequest) {
+  if (isPublicMode()) {
+    return NextResponse.json({ error: "Read-only in public mode" }, { status: 403 });
+  }
   const body = await req.json();
 
   const env = body.environment ?? {};

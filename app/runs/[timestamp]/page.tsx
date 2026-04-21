@@ -8,6 +8,7 @@ import RemarkEditor from "@/components/RemarkEditor";
 import FailedCaseList from "@/components/FailedCaseList";
 import AllCaseList from "@/components/AllCaseList";
 import { formatTimestamp } from "@/lib/utils";
+import { isPublicMode, maskRun, maskTestCases } from "@/lib/masking";
 
 interface SuiteItem {
   name: string;
@@ -24,12 +25,20 @@ export default async function RunDetailPage({
   params: Promise<{ timestamp: string }>;
 }) {
   const { timestamp } = await params;
-  const run = await prisma.run.findUnique({
+  const rawRun = await prisma.run.findUnique({
     where: { timestamp },
     include: { artifacts: true, testCases: { include: { artifacts: true }, orderBy: { status: "asc" } } },
   });
 
-  if (!run) notFound();
+  if (!rawRun) notFound();
+
+  // 공개 모드에서는 Run 최상위 + testCases + artifacts 모두 마스킹
+  const publicMode = isPublicMode();
+  const maskedRun = maskRun(rawRun);
+  const maskedTestCases = maskTestCases(rawRun.testCases as any[]);
+  const run = publicMode
+    ? { ...maskedRun, artifacts: [], testCases: maskedTestCases }
+    : { ...rawRun, testCases: rawRun.testCases };
 
   const env: Record<string, string> = {
     ...((run.environment as unknown as Record<string, string>) ?? {}),
@@ -218,8 +227,10 @@ export default async function RunDetailPage({
         </div>
       )}
 
-      {/* Remark */}
-      <RemarkEditor timestamp={run.timestamp} initialRemark={run.remark} />
+      {/* Remark — 공개 모드에선 숨김 */}
+      {!publicMode && (
+        <RemarkEditor timestamp={run.timestamp} initialRemark={run.remark} />
+      )}
     </main>
   );
 }

@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isPublicMode } from "@/lib/masking";
 
 /**
  * GET /api/trigger?status=pending
  * 대기 중인 트리거 목록 조회 (로컬 폴링용)
  */
 export async function GET(req: NextRequest) {
+  if (isPublicMode()) {
+    return NextResponse.json({ triggers: [] });
+  }
   const sp = req.nextUrl.searchParams;
   const status = sp.get("status") || "pending";
 
@@ -31,6 +35,9 @@ export async function GET(req: NextRequest) {
  *   }
  */
 export async function POST(req: NextRequest) {
+  if (isPublicMode()) {
+    return NextResponse.json({ error: "Read-only in public mode" }, { status: 403 });
+  }
   try {
     const body = await req.json();
 
@@ -69,6 +76,9 @@ export async function POST(req: NextRequest) {
  *   }
  */
 export async function PATCH(req: NextRequest) {
+  if (isPublicMode()) {
+    return NextResponse.json({ error: "Read-only in public mode" }, { status: 403 });
+  }
   try {
     const body = await req.json();
     const { id, status, result, runId } = body;

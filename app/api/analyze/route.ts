@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { isPublicMode } from "@/lib/masking";
 
 function getClient(): Anthropic {
   // AI Gateway 우선, 없으면 직접 API 키 사용
@@ -27,6 +28,9 @@ function getModel(): string {
 }
 
 export async function POST(req: NextRequest) {
+  if (isPublicMode()) {
+    return NextResponse.json({ error: "AI 분석은 데모 모드에서 비활성화됩니다." }, { status: 403 });
+  }
   let client: Anthropic;
   try {
     client = getClient();

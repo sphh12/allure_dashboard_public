@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { DEMO_MODE, isPublicMode, maskRun, maskTestCases } from "@/lib/masking";
+
+const NO_STORE_HEADERS = DEMO_MODE ? { "Cache-Control": "no-store" } : undefined;
 
 export async function GET(
   _req: NextRequest,
@@ -16,6 +19,15 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  if (isPublicMode()) {
+    const masked = maskRun(run);
+    const maskedCases = maskTestCases((run.testCases as any[]) ?? []);
+    return NextResponse.json(
+      { ...masked, artifacts: [], testCases: maskedCases },
+      { headers: NO_STORE_HEADERS }
+    );
+  }
+
   return NextResponse.json(run);
 }
 
@@ -23,6 +35,9 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ timestamp: string }> }
 ) {
+  if (isPublicMode()) {
+    return NextResponse.json({ error: "Read-only in public mode" }, { status: 403 });
+  }
   const { timestamp } = await params;
   const body = await req.json();
 
@@ -62,6 +77,9 @@ export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ timestamp: string }> }
 ) {
+  if (isPublicMode()) {
+    return NextResponse.json({ error: "Read-only in public mode" }, { status: 403 });
+  }
   const { timestamp } = await params;
 
   const run = await prisma.run.findUnique({

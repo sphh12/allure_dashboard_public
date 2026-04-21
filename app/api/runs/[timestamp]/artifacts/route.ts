@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isPublicMode } from "@/lib/masking";
 
 export async function GET(
   _req: NextRequest,
@@ -16,6 +17,10 @@ export async function GET(
     return NextResponse.json({ error: "Run not found" }, { status: 404 });
   }
 
+  if (isPublicMode()) {
+    return NextResponse.json([]);
+  }
+
   const artifacts = await prisma.artifact.findMany({
     where: { runId: run.id },
     orderBy: { createdAt: "asc" },
@@ -28,6 +33,9 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ timestamp: string }> }
 ) {
+  if (isPublicMode()) {
+    return NextResponse.json({ error: "Read-only in public mode" }, { status: 403 });
+  }
   const { timestamp } = await params;
   const body = await req.json();
 

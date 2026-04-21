@@ -5,6 +5,7 @@ import Filters from "@/components/Filters";
 import StatsBar from "@/components/StatsBar";
 import OverviewCharts from "@/components/OverviewCharts";
 import ThemeToggle from "@/components/ThemeToggle";
+import { maskRuns } from "@/lib/masking";
 
 interface Props {
   searchParams: Promise<{
@@ -90,7 +91,7 @@ export default async function Home({ searchParams }: Props) {
   }
 
   const hasFilter = !!(sp.platform || sp.status || sp.from || sp.to || sp.q);
-  const runs = hasFilter
+  const rawRuns = hasFilter
     ? await prisma.run.findMany({
         where,
         orderBy: { timestamp: "desc" },
@@ -115,6 +116,10 @@ export default async function Home({ searchParams }: Props) {
       })
     : allRuns;
 
+  // 공개 모드 마스킹 적용
+  const runs = maskRuns(rawRuns);
+  const maskedAllRuns = maskRuns(allRuns);
+
   return (
     <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 sm:py-8 animate-in">
       {/* 헤더 — 클릭 시 초기 화면으로 + 테마 토글 */}
@@ -135,13 +140,13 @@ export default async function Home({ searchParams }: Props) {
       {/* 통계 */}
       <div className="glass rounded-2xl p-5 sm:p-6 mb-5">
         <Suspense>
-          <StatsBar stats={aggregated} latestRun={allRuns[0] ?? null} />
+          <StatsBar stats={aggregated} latestRun={maskedAllRuns[0] ?? null} />
         </Suspense>
       </div>
 
       {/* 차트 Overview */}
       <Suspense>
-        <OverviewCharts allRuns={allRuns} allStats={aggregated} runs={runs} />
+        <OverviewCharts allRuns={maskedAllRuns} allStats={aggregated} runs={runs} />
       </Suspense>
 
       {/* 필터 */}
@@ -156,7 +161,7 @@ export default async function Home({ searchParams }: Props) {
         <h2 className="text-sm font-semibold" style={{ color: "var(--white)" }}>
           Test Runs
           <span className="ml-2 text-xs font-normal" style={{ color: "var(--muted)" }}>
-            {hasFilter ? `${runs.length} of ${allRuns.length}` : `${runs.length}`}
+            {hasFilter ? `${runs.length} of ${maskedAllRuns.length}` : `${runs.length}`}
           </span>
         </h2>
       </div>
