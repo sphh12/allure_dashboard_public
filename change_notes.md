@@ -79,10 +79,6 @@
 - APP 항목에 파일명만 표시, Environment 항목 표시 개선
 - EnvCard 텍스트 잘림 시에만 툴팁 표시 (2px 여유값 + 리사이즈 대응, 대소문자 무관 매칭)
 
-## 2026-02-22
-- CLAUDE.md 프로젝트 가이드 신규 생성
-- `.gitignore`에 `.claude/` 추가 (Git 추적 제외)
-
 ## 2026-02-21
 - Allure Dashboard 초기 구축 — Next.js 16 + React 19 + Prisma + PostgreSQL
 - Vercel Blob 첨부파일 뷰어 구현 (이미지/비디오/JSON/XML/로그)

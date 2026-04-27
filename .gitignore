@@ -32,5 +32,5 @@ npm-debug.log*
 next-env.d.ts
 .vercel
 
-# Claude Code (로컬 전용, Git 미추적)
+# IDE / editor local files
 .claude/

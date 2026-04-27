@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ analysis: text });
   } catch (e) {
     const errMsg = e instanceof Error ? e.message : String(e);
-    console.error("[analyze] Claude API 오류:", errMsg);
+    console.error("[analyze] AI API 오류:", errMsg);
     return NextResponse.json({ error: errMsg }, { status: 500 });
   }
 }
