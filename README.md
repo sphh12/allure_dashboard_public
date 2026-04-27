@@ -1,15 +1,16 @@
-# Allure Dashboard
+# 📊 Allure Dashboard
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=flat-square&logo=vercel)](https://allure-dashboard-git-feat-public-demo-sph12test-6232s-projects.vercel.app)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?style=flat-square&logo=prisma)](https://www.prisma.io/)
+> QA 자동화 테스트 실행 결과를 시각화하는 대시보드 웹 애플리케이션
 
-QA 자동화 테스트 실행 결과를 시각화하는 대시보드 웹 애플리케이션.
 Allure Report 데이터를 수집하여 테스트 이력 관리, 트렌드 분석, 실패 원인 추적을 제공합니다.
 
-> **Live Demo**: [allure-dashboard-git-feat-public-demo-sph12test-6232s-projects.vercel.app](https://allure-dashboard-git-feat-public-demo-sph12test-6232s-projects.vercel.app)
-> 모든 민감 데이터는 마스킹 처리되어 표시됩니다.
+---
+
+## 🌐 Live Demo
+
+> **▶ [Allure Dashboard 데모 보기](https://allure-dashboard-git-feat-public-demo-sph12test-6232s-projects.vercel.app)**
+>
+> 마스킹 처리된 실제 테스트 실행 데이터 확인 가능 · 누구나 접속 가능
 
 ---
 
