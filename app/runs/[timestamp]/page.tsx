@@ -168,7 +168,7 @@ export default async function RunDetailPage({
               const ver = env.platformVersion || "";
               displayValue = ver || displayValue;
             }
-            // APP: appName + appVersion 합치기 (예: "GME Remit(livetest) 7.15.0")
+            // APP: appName + appVersion 합치기 (예: "DemoApp 1.0.0")
             if (key === "appName") {
               const ver = env.appVersion || "";
               displayValue = ver ? `${displayValue} ${ver}` : displayValue;

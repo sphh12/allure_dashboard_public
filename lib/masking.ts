@@ -20,16 +20,26 @@ export function isDemoMode(): boolean {
 export const isPublicMode = isDemoMode;
 
 // ───── 키워드 치환 맵 ─────
-// 회사/서비스 관련 키워드를 일반명으로 일괄 치환
+// 환경변수에 정의된 시크릿 키워드들을 일반명으로 일괄 치환
 // 스택 트레이스, 환경변수, 임의 텍스트에 적용
+//
+// 사용법: NEXT_PUBLIC_DEMO_KEYWORDS="키워드1,키워드2" 형태로 환경변수에 정의
+// 코드에는 실제 회사명/서비스명을 남기지 않음
 
-const KEYWORD_REPLACEMENTS: Array<[RegExp, string]> = [
-  [/GME\s*Remit/gi, "DemoApp"],
-  [/gmeremit/gi, "demoapp"],
-  [/\bGME\b/g, "Demo"],
-  [/gme1_test/gi, "sample_test"],
-  [/TestAndroidSample/g, "TestSample"],
-];
+function buildKeywordReplacements(): Array<[RegExp, string]> {
+  const raw = process.env.NEXT_PUBLIC_DEMO_KEYWORDS || "";
+  const keywords = raw.split(",").map((k) => k.trim()).filter(Boolean);
+  return keywords.map((kw, idx) => {
+    const pattern = new RegExp(escapeRegExp(kw), "gi");
+    return [pattern, `Sample${idx + 1}`] as [RegExp, string];
+  });
+}
+
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+const KEYWORD_REPLACEMENTS: Array<[RegExp, string]> = buildKeywordReplacements();
 
 export function applyKeywordReplacements(text: string): string {
   let result = text;
@@ -116,7 +126,7 @@ export function maskTestCaseName(_value: string | null | undefined, uid: string 
   return `Test Case #${shortHash}`;
 }
 
-// fullName: tests.android.gme1_test.TestAndroidSample#test_Login → tests.module.Suite#test_<hash>
+// fullName: tests.<package>.<TestClass>#<test_method> → tests.module.Sample#test_<hash>
 export function maskFullName(_value: string | null | undefined, uid: string | null | undefined): string {
   const shortHash = hashToShort(uid || "");
   return `tests.module.Sample#test_${shortHash}`;
